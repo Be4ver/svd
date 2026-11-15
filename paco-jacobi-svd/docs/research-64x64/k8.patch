@@ -1,0 +1,10 @@
+--- a/jacobi_svd_custom.cpp
++++ b/jacobi_svd_custom.cpp
+@@ -441,6 +441,7 @@
+         constexpr int32_t kUbBudget = 120 * 1024;   // 实测 K 再大收益很小，保守取 120KB
+         const int32_t perMatBytes = (rows + 4) * colsWork * static_cast<int32_t>(sizeof(float));
+         int32_t K = (perMatBytes > 0) ? (kUbBudget / perMatBytes) : 1;
++        if (rows == 64 && colsWork == 64) K = 8;
+         if (K < 1) K = 1;
+         if (K > jacobi_svd::kMaxK) K = jacobi_svd::kMaxK;
+         for (int32_t m0 = mStart; m0 < mEnd; m0 += K) {

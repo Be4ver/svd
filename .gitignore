@@ -1,0 +1,23 @@
+# Ascend/CMake build trees and generated binaries
+**/build/
+**/cmake-build-debug/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
+**/*.o
+**/*.a
+**/*.so
+**/*.dll
+**/*.exe
+**/*.obj
+
+# Generated numerical input/output and Python cache files
+**/*.bin
+**/__pycache__/
+**/.superpowers/
+**/output/
+
+# Local profiling/build logs that are not source or benchmark evidence
+**/*.prof
+**/*.dump

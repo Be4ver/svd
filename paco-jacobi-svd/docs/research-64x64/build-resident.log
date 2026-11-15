@@ -1,0 +1,175 @@
+[  2%] Building CXX object CMakeFiles/jacobi_svd_tiling.dir/jacobi_svd_tiling.cpp.o
+[  4%] Creating directories for 'jacobi_svd_kernels_precompile'
+[  6%] No download step for 'jacobi_svd_kernels_precompile'
+[  8%] No update step for 'jacobi_svd_kernels_precompile'
+[ 10%] No patch step for 'jacobi_svd_kernels_precompile'
+[ 13%] Performing configure step for 'jacobi_svd_kernels_precompile'
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    DYNAMIC_MODE
+    INCLUDE_DIR
+
+
+-- Build files have been written to: /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_precompile-prefix/src/jacobi_svd_kernels_precompile-build
+[ 15%] Performing build step for 'jacobi_svd_kernels_precompile'
+[100%] Building CXX object CMakeFiles/precompile_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[100%] Built target precompile_obj
+[ 17%] Linking CXX static library libjacobi_svd_tiling.a
+[ 17%] Built target jacobi_svd_tiling
+[100%] Built target check_src_template
+[ 19%] No install step for 'jacobi_svd_kernels_precompile'
+[ 21%] Completed 'jacobi_svd_kernels_precompile'
+[ 21%] Built target jacobi_svd_kernels_precompile
+[ 23%] Creating directories for 'jacobi_svd_kernels_preprocess'
+[ 26%] No download step for 'jacobi_svd_kernels_preprocess'
+[ 28%] No update step for 'jacobi_svd_kernels_preprocess'
+[ 30%] No patch step for 'jacobi_svd_kernels_preprocess'
+[ 32%] Performing configure step for 'jacobi_svd_kernels_preprocess'
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_preprocess-prefix/src/jacobi_svd_kernels_preprocess-build
+[ 34%] Performing build step for 'jacobi_svd_kernels_preprocess'
+[ 33%] Building CXX object CMakeFiles/preprocess_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[ 66%] Building CXX object CMakeFiles/aic_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[100%] Building CXX object CMakeFiles/aiv_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[100%] Built target preprocess_obj
+[100%] Built target aic_obj
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld -m aicorelinux -Ttext=0 /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_preprocess-prefix/src/jacobi_svd_kernels_preprocess-build/CMakeFiles/aic_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o -o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_preprocess-prefix/src/jacobi_svd_kernels_preprocess-build/CMakeFiles/aic_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o[100%] Built target merge_aic_obj_text
+[100%] Built target aiv_obj
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld -m aicorelinux -Ttext=0 /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_preprocess-prefix/src/jacobi_svd_kernels_preprocess-build/CMakeFiles/aiv_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o -o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_preprocess-prefix/src/jacobi_svd_kernels_preprocess-build/CMakeFiles/aiv_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o[100%] Built target merge_aiv_obj_text
+[100%] Built target _host_cpp
+[ 36%] No install step for 'jacobi_svd_kernels_preprocess'
+[ 39%] Completed 'jacobi_svd_kernels_preprocess'
+[ 39%] Built target jacobi_svd_kernels_preprocess
+[ 43%] Creating directories for 'jacobi_svd_kernels_aic_device'
+[ 43%] Creating directories for 'jacobi_svd_kernels_host'
+[ 45%] Creating directories for 'jacobi_svd_kernels_aiv_device'
+[ 47%] No download step for 'jacobi_svd_kernels_aic_device'
+[ 50%] No download step for 'jacobi_svd_kernels_host'
+[ 52%] No download step for 'jacobi_svd_kernels_aiv_device'
+[ 54%] No update step for 'jacobi_svd_kernels_aic_device'
+[ 56%] No update step for 'jacobi_svd_kernels_host'
+[ 58%] No update step for 'jacobi_svd_kernels_aiv_device'
+[ 63%] No patch step for 'jacobi_svd_kernels_aic_device'
+[ 63%] No patch step for 'jacobi_svd_kernels_host'
+[ 65%] No patch step for 'jacobi_svd_kernels_aiv_device'
+[ 67%] Performing configure step for 'jacobi_svd_kernels_aic_device'
+[ 69%] Performing configure step for 'jacobi_svd_kernels_host'
+[ 71%] Performing configure step for 'jacobi_svd_kernels_aiv_device'
+-- The C compiler identification is GNU 9.4.0
+-- The C compiler identification is GNU 9.4.0
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting C compiler ABI info - done
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    ASCEND_PYTHON_EXECUTABLE
+
+
+-- Build files have been written to: /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_host-prefix/src/jacobi_svd_kernels_host-build
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compiler ABI info - done
+[ 73%] Performing build step for 'jacobi_svd_kernels_host'
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting CXX compile features - done
+-- Configuring done (0.6s)
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aiv_device-prefix/src/jacobi_svd_kernels_aiv_device-build
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aic_device-prefix/src/jacobi_svd_kernels_aic_device-build
+[100%] Building CXX object CMakeFiles/host_bisheng_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[ 76%] Performing build step for 'jacobi_svd_kernels_aiv_device'
+[ 78%] Performing build step for 'jacobi_svd_kernels_aic_device'
+[100%] Building CXX object CMakeFiles/device_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/build-resident/auto_gen/jacobi_svd_kernels/auto_gen_jacobi_svd_custom.cpp.o
+[100%] Building CXX object CMakeFiles/device_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/build-resident/auto_gen/jacobi_svd_kernels/auto_gen_jacobi_svd_custom.cpp.o
+[100%] Built target host_bisheng_obj
+[ 80%] Performing install step for 'jacobi_svd_kernels_host'
+[100%] Building CXX object CMakeFiles/host_bisheng_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[100%] Built target host_bisheng_obj
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_host_dir/./objects-Debug/host_bisheng_obj/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o
+[ 82%] Completed 'jacobi_svd_kernels_host'
+[ 82%] Built target jacobi_svd_kernels_host
+[100%] Built target device_obj
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld  -m aicorelinux -r  -Ttext=0 /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aic_device-prefix/src/jacobi_svd_kernels_aic_device-build/CMakeFiles/device_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/build-resident/auto_gen/jacobi_svd_kernels/auto_gen_jacobi_svd_custom.cpp.o -static -o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aic_device_dir/device.o
+[100%] Built target merge_device_obj
+[ 84%] No install step for 'jacobi_svd_kernels_aic_device'
+[ 86%] Completed 'jacobi_svd_kernels_aic_device'
+[ 86%] Built target jacobi_svd_kernels_aic_device
+[100%] Built target device_obj
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld  -m aicorelinux -r  -Ttext=0 /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aiv_device-prefix/src/jacobi_svd_kernels_aiv_device-build/CMakeFiles/device_obj.dir/tmp/jacobi64-study-20261112-iOuF3K/build-resident/auto_gen/jacobi_svd_kernels/auto_gen_jacobi_svd_custom.cpp.o -static -o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aiv_device_dir/device.o
+[100%] Built target merge_device_obj
+[ 89%] No install step for 'jacobi_svd_kernels_aiv_device'
+[ 91%] Completed 'jacobi_svd_kernels_aiv_device'
+[ 91%] Built target jacobi_svd_kernels_aiv_device
+/usr/local/Ascend/ascend-toolkit/latest/tools/ccec_compiler/bin/ld.lld  -m aicorelinux   -Ttext=0 /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aic_device_dir/device.o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_aiv_device_dir/device.o -static -o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_merge_obj_dir/device.o
+[ 91%] Built target jacobi_svd_kernels_merge_obj
+[ 93%] Building CXX object CMakeFiles/jacobi_svd_kernels_host_stub_obj.dir/auto_gen/jacobi_svd_kernels/host_stub.cpp.o
+[ 93%] Built target jacobi_svd_kernels_host_stub_obj
+[ 95%] Linking CXX static library lib/libjacobi_svd_kernels.a
+/usr/local/Ascend/ascend-toolkit/latest/bin/ascendc_pack_kernel /tmp/jacobi64-study-20261112-iOuF3K/build-resident/CMakeFiles/jacobi_svd_kernels_host_stub_obj.dir/auto_gen/jacobi_svd_kernels/host_stub.cpp.o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_merge_obj_dir/device.o 0 /tmp/jacobi64-study-20261112-iOuF3K/build-resident/CMakeFiles/jacobi_svd_kernels_host_stub_obj.dir/auto_gen/jacobi_svd_kernels/host_stub.cpp.o
+recompile: /usr/bin/ar qc lib/libjacobi_svd_kernels.a CMakeFiles/jacobi_svd_kernels_host_stub_obj.dir/auto_gen/jacobi_svd_kernels/host_stub.cpp.o /tmp/jacobi64-study-20261112-iOuF3K/build-resident/jacobi_svd_kernels_host_dir/objects-Debug/host_bisheng_obj/tmp/jacobi64-study-20261112-iOuF3K/src-resident/jacobi_svd_custom.cpp.o  elf_tool.c.o ascendc_runtime.cpp.o
+recompile: /usr/bin/ranlib lib/libjacobi_svd_kernels.a
+[ 95%] Built target jacobi_svd_kernels
+[ 97%] Building CXX object CMakeFiles/jacobi_svd_main.dir/jacobi_svd_main.cpp.o
+[100%] Linking CXX executable jacobi_svd_main
+[100%] Built target jacobi_svd_main

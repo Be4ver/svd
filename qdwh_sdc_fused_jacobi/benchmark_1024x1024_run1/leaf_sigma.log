@@ -1,0 +1,25 @@
+leaf=0 root=0 n=38 max_abs=1.509e-06 max_rel=1.677e-06 sorted=True PASS
+leaf=1 root=0 n=34 max_abs=1.126e-06 max_rel=1.484e-06 sorted=True PASS
+leaf=2 root=0 n=37 max_abs=9.248e-07 max_rel=1.421e-06 sorted=True PASS
+leaf=3 root=0 n=40 max_abs=9.631e-07 max_rel=1.748e-06 sorted=True PASS
+leaf=4 root=0 n=43 max_abs=9.513e-07 max_rel=2.067e-06 sorted=True PASS
+leaf=5 root=0 n=47 max_abs=6.480e-07 max_rel=1.709e-06 sorted=True PASS
+leaf=6 root=0 n=50 max_abs=8.816e-07 max_rel=2.873e-06 sorted=True PASS
+leaf=7 root=0 n=53 max_abs=4.072e-07 max_rel=1.662e-06 sorted=True PASS
+leaf=8 root=0 n=56 max_abs=5.087e-07 max_rel=2.636e-06 sorted=True PASS
+leaf=9 root=0 n=61 max_abs=4.903e-07 max_rel=3.268e-06 sorted=True PASS
+leaf=10 root=0 n=33 max_abs=1.698e-07 max_rel=1.490e-06 sorted=True PASS
+leaf=11 root=0 n=35 max_abs=1.317e-07 max_rel=1.341e-06 sorted=True PASS
+leaf=12 root=0 n=36 max_abs=1.432e-07 max_rel=1.706e-06 sorted=True PASS
+leaf=13 root=0 n=39 max_abs=8.503e-08 max_rel=1.191e-06 sorted=True PASS
+leaf=14 root=0 n=41 max_abs=1.064e-07 max_rel=1.777e-06 sorted=True PASS
+leaf=15 root=0 n=43 max_abs=1.105e-07 max_rel=2.220e-06 sorted=True PASS
+leaf=16 root=0 n=46 max_abs=1.074e-07 max_rel=2.619e-06 sorted=True PASS
+leaf=17 root=0 n=49 max_abs=7.974e-08 max_rel=2.391e-06 sorted=True PASS
+leaf=18 root=0 n=53 max_abs=7.713e-08 max_rel=2.883e-06 sorted=True PASS
+leaf=19 root=0 n=58 max_abs=5.152e-08 max_rel=2.445e-06 sorted=True PASS
+leaf=20 root=0 n=63 max_abs=4.198e-08 max_rel=2.586e-06 sorted=True PASS
+leaf=21 root=0 n=37 max_abs=2.150e-08 max_rel=1.759e-06 sorted=True PASS
+leaf=22 root=0 n=32 max_abs=1.808e-08 max_rel=1.747e-06 sorted=True PASS
+sigma_count=1024 leaves=23 max_abs=1.509e-06 max_rel=3.268e-06 tolerance=(atol=1e-05, rtol=1e-05)
+RESULT: PASS

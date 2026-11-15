@@ -1,0 +1,212 @@
+[
+  {
+    "variant": "baseline",
+    "batch": 1,
+    "returncode": 0,
+    "median_ms": 3.62322,
+    "min_ms": 3.62246,
+    "max_ms": 3.62446,
+    "full_verify_pass": true,
+    "sigma_max_abs": 5.054473876953125e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 1,
+    "returncode": 0,
+    "median_ms": 3.6225,
+    "min_ms": 3.6217,
+    "max_ms": 3.62374,
+    "full_verify_pass": true,
+    "sigma_max_abs": 5.054473876953125e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 1,
+    "returncode": 0,
+    "median_ms": 3.62518,
+    "min_ms": 3.62472,
+    "max_ms": 3.6256,
+    "full_verify_pass": true,
+    "sigma_max_abs": 5.054473876953125e-05
+  },
+  {
+    "variant": "baseline",
+    "batch": 40,
+    "returncode": 0,
+    "median_ms": 3.94808,
+    "min_ms": 3.94764,
+    "max_ms": 3.94848,
+    "full_verify_pass": true,
+    "sigma_max_abs": 7.62939453125e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 40,
+    "returncode": 0,
+    "median_ms": 3.9473,
+    "min_ms": 3.94676,
+    "max_ms": 3.94782,
+    "full_verify_pass": true,
+    "sigma_max_abs": 7.62939453125e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 40,
+    "returncode": 0,
+    "median_ms": 3.94922,
+    "min_ms": 3.9483,
+    "max_ms": 3.98096,
+    "full_verify_pass": true,
+    "sigma_max_abs": 7.62939453125e-05
+  },
+  {
+    "variant": "baseline",
+    "batch": 41,
+    "returncode": 0,
+    "median_ms": 8.74484,
+    "min_ms": 8.7444,
+    "max_ms": 8.7574,
+    "full_verify_pass": true,
+    "sigma_max_abs": 7.915496826171875e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 41,
+    "returncode": 0,
+    "median_ms": 8.7524,
+    "min_ms": 8.75218,
+    "max_ms": 8.7529,
+    "full_verify_pass": true,
+    "sigma_max_abs": 7.915496826171875e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 41,
+    "returncode": 0,
+    "median_ms": 9.77456,
+    "min_ms": 9.77436,
+    "max_ms": 9.77546,
+    "full_verify_pass": true,
+    "sigma_max_abs": 7.915496826171875e-05
+  },
+  {
+    "variant": "baseline",
+    "batch": 256,
+    "returncode": 0,
+    "median_ms": 15.9976,
+    "min_ms": 15.9965,
+    "max_ms": 15.9985,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 256,
+    "returncode": 0,
+    "median_ms": 16.0003,
+    "min_ms": 15.9998,
+    "max_ms": 16.0023,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 256,
+    "returncode": 0,
+    "median_ms": 20.703,
+    "min_ms": 20.7016,
+    "max_ms": 20.7034,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "baseline",
+    "batch": 281,
+    "returncode": 0,
+    "median_ms": 22.6706,
+    "min_ms": 22.6683,
+    "max_ms": 22.6935,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 281,
+    "returncode": 0,
+    "median_ms": 17.5012,
+    "min_ms": 17.5004,
+    "max_ms": 17.5031,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 281,
+    "returncode": 0,
+    "median_ms": 27.6656,
+    "min_ms": 27.6653,
+    "max_ms": 27.6763,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "baseline",
+    "batch": 320,
+    "returncode": 0,
+    "median_ms": 22.6699,
+    "min_ms": 22.6694,
+    "max_ms": 22.6932,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 320,
+    "returncode": 0,
+    "median_ms": 17.5049,
+    "min_ms": 17.5021,
+    "max_ms": 17.5164,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 320,
+    "returncode": 0,
+    "median_ms": 27.6659,
+    "min_ms": 27.6654,
+    "max_ms": 27.6681,
+    "full_verify_pass": true,
+    "sigma_max_abs": 8.678436279296875e-05
+  },
+  {
+    "variant": "baseline",
+    "batch": 3200,
+    "returncode": 0,
+    "median_ms": 180.603,
+    "min_ms": 180.591,
+    "max_ms": 180.648,
+    "full_verify_pass": true,
+    "sigma_max_abs": 9.34600830078125e-05
+  },
+  {
+    "variant": "k8",
+    "batch": 3200,
+    "returncode": 0,
+    "median_ms": 170.641,
+    "min_ms": 170.639,
+    "max_ms": 170.659,
+    "full_verify_pass": true,
+    "sigma_max_abs": 9.34600830078125e-05
+  },
+  {
+    "variant": "hoist",
+    "batch": 3200,
+    "returncode": 0,
+    "median_ms": 233.477,
+    "min_ms": 233.473,
+    "max_ms": 233.536,
+    "full_verify_pass": true,
+    "sigma_max_abs": 9.34600830078125e-05
+  }
+]

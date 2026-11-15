@@ -1,0 +1,45 @@
+--- a/jacobi_svd_main.cpp
++++ b/jacobi_svd_main.cpp
+@@ -155,15 +155,33 @@
+     int32_t stages = 3;
+     if (argc > 7) stages = std::atoi(argv[7]);
+ 
+-    const auto start = std::chrono::high_resolution_clock::now();
+-    const aclError launchRet = aclrtlaunch_jacobi_svd_batched(
+-        static_cast<uint32_t>(clusterNum), stream, rows, cols, batch, cfg.maxSweeps,
+-        tiling.blockDim, clusterNum, aRawDevice, aDevice, bDevice, gDevice, sigmaDevice, flagDevice, stages);
+-    CHECK_ACL(launchRet);
+-    CHECK_ACL(aclrtSynchronizeStream(stream));
+-    const auto end = std::chrono::high_resolution_clock::now();
+-    const double elapsedMs =
+-        std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0;
++    const int warmup = 3;
++    const int repetitions = 9;
++    std::vector<double> deviceTimes;
++    aclrtEvent beginEvent = nullptr, endEvent = nullptr;
++    CHECK_ACL(aclrtCreateEvent(&beginEvent));
++    CHECK_ACL(aclrtCreateEvent(&endEvent));
++    for (int iteration = -warmup; iteration < repetitions; ++iteration) {
++        CHECK_ACL(aclrtRecordEvent(beginEvent, stream));
++        CHECK_ACL(aclrtlaunch_jacobi_svd_batched(
++            static_cast<uint32_t>(clusterNum), stream, rows, cols, batch, cfg.maxSweeps,
++            tiling.blockDim, clusterNum, aRawDevice, aDevice, bDevice, gDevice,
++            sigmaDevice, flagDevice, stages));
++        CHECK_ACL(aclrtRecordEvent(endEvent, stream));
++        CHECK_ACL(aclrtSynchronizeStream(stream));
++        float duration = 0;
++        CHECK_ACL(aclrtEventElapsedTime(&duration, beginEvent, endEvent));
++        if (iteration >= 0) deviceTimes.push_back(duration);
++    }
++    std::sort(deviceTimes.begin(), deviceTimes.end());
++    double elapsedMs = deviceTimes[deviceTimes.size()/2];
++    std::cout << "DEVICE_EVENT median_ms=" << elapsedMs
++              << " min_ms=" << deviceTimes.front()
++              << " max_ms=" << deviceTimes.back()
++              << " stages=" << stages << " reps=" << repetitions << std::endl;
++    CHECK_ACL(aclrtDestroyEvent(beginEvent));
++    CHECK_ACL(aclrtDestroyEvent(endEvent));
++    if (stages < 3) return 0;
+ 
+     std::vector<float> bHost(static_cast<size_t>(rowsPad) * colsPad * batch);
+     std::vector<float> sigDev(static_cast<size_t>(rowsPad) * batch);

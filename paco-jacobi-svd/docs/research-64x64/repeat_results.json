@@ -1,0 +1,56 @@
+[
+  {
+    "seed": 2025,
+    "variant": "baseline",
+    "batch": 40,
+    "median_ms": 3.91006,
+    "min_ms": 3.90988,
+    "max_ms": 3.9103,
+    "full_verify_pass": true
+  },
+  {
+    "seed": 2025,
+    "variant": "tournament",
+    "batch": 40,
+    "median_ms": 0.94714,
+    "min_ms": 0.94672,
+    "max_ms": 0.96026,
+    "full_verify_pass": true
+  },
+  {
+    "seed": 2026,
+    "variant": "baseline",
+    "batch": 40,
+    "median_ms": 3.986,
+    "min_ms": 3.97082,
+    "max_ms": 4.0011,
+    "full_verify_pass": true
+  },
+  {
+    "seed": 2026,
+    "variant": "tournament",
+    "batch": 40,
+    "median_ms": 0.94908,
+    "min_ms": 0.9468,
+    "max_ms": 0.95662,
+    "full_verify_pass": true
+  },
+  {
+    "seed": 2027,
+    "variant": "baseline",
+    "batch": 40,
+    "median_ms": 3.92586,
+    "min_ms": 3.92518,
+    "max_ms": 3.92616,
+    "full_verify_pass": true
+  },
+  {
+    "seed": 2027,
+    "variant": "tournament",
+    "batch": 40,
+    "median_ms": 0.94638,
+    "min_ms": 0.94608,
+    "max_ms": 0.95734,
+    "full_verify_pass": true
+  }
+]

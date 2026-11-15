@@ -1,0 +1,6 @@
+==== 批量单边块状雅可比 SVD（AIV 旋转 + AIC 算 Gram）====
+矩阵: 64 x 64 -> pad 64 x 64, 批大小: 8, AIV 核数: 40, 最大 sweep: 30
+输入: ../input/A_batch.bin (131072 字节)
+DEVICE_EVENT median_ms=0.94392 min_ms=0.94356 max_ms=0.94564 stages=3 reps=9
+耗时: 0.94392 ms (batch=8, 64x64)
+[奇异值前 5 个] 矩阵 0: 16.507 15.1642 14.7706 14.1744 13.2528 

@@ -1,0 +1,26 @@
+--- a/jacobi_svd_custom.cpp
++++ b/jacobi_svd_custom.cpp
+@@ -277,7 +277,10 @@
+                 Mul(svV_, tauV_, tauV_, r8);
+                 Adds(svV_, svV_, 1.0f, r8);
+                 Sqrt(svV_, svV_, r8);                // s = sqrt(1+tau^2)
++                float csAll[64], snAll[64], invAll[64], tAll[64];
++                bool activeAll[64];
+                 for (int32_t k = 0; k < K; ++k) {
++                    activeAll[k] = false;
+                     const float c = red_.GetValue(2 * r8 + k);
+                     const float sc = scls_.GetValue(k);
+                     if (c <= 1e-6f * sc && c >= -1e-6f * sc) continue;
+@@ -288,6 +291,12 @@
+                     const float cs = 1.0f / invCs;
+                     const float sn = cs * t;
+                     rotated = true;
++                    activeAll[k] = true;
++                    csAll[k] = cs; snAll[k] = sn; invAll[k] = invCs; tAll[k] = t;
++                }
++                for (int32_t k = 0; k < K; ++k) {
++                    if (!activeAll[k]) continue;
++                    const float cs = csAll[k], sn = snAll[k], invCs = invAll[k], t = tAll[k];
+                     LocalTensor<float> uk = u[k * colsW];
+                     LocalTensor<float> vk = v[k * colsW];
+                     // u' = cs*u - sn*v（就地）；v' = (1/cs)*v + t*u'，全程无 Adds

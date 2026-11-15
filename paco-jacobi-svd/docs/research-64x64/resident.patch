@@ -1,0 +1,42 @@
+--- a/jacobi_svd_custom.cpp
++++ b/jacobi_svd_custom.cpp
+@@ -302,6 +302,25 @@
+         return rotated;
+     }
+ 
++    __aicore__ inline void RunResidentLex(__gm__ float *input, __gm__ float *output,
++        int32_t m, int64_t matElems, int32_t maxSweeps)
++    {
++        GlobalTensor<float> in, out;
++        in.SetGlobalBuffer(input + static_cast<int64_t>(m) * matElems);
++        out.SetGlobalBuffer(output + static_cast<int64_t>(m) * matElems);
++        LoadRows(tile_, in, 0, 4096);
++        for (int32_t sweep = 0; sweep < maxSweeps; ++sweep) {
++            bool rotated = false;
++            for (int32_t i = 0; i < 64; ++i) {
++                for (int32_t j = i + 1; j < 64; ++j) {
++                    if (RotateRows(tile_[i * 64], tile_[j * 64], 64)) rotated = true;
++                }
++            }
++            if (!rotated) break;
++        }
++        StoreRows(out, 0, tile_, 4096);
++    }
++
+     /** 从 G 的对角线取 sqrt 写 sigma（AIC 算完 Gram 之后由 AIV 调用） */
+     __aicore__ inline void WriteSigmaFromG(__gm__ float *gBase, __gm__ float *sigmaBase, int32_t mStart,
+                                            int32_t mEnd, int32_t rows, int32_t rowsPad)
+@@ -437,7 +456,12 @@
+     const int32_t mStart = cid * perCore;
+     const int32_t mEnd = jacobi_svd::MinI(batchSize, mStart + perCore);
+ 
+-    if (rows <= kB && colsWork <= 64 && perCore > 1) {
++    if (rows == 64 && colsWork == 64 && perCore == 1) {
++        for (int32_t m = mStart; m < mEnd; ++m) {
++            op.RunResidentLex(reinterpret_cast<__gm__ float *>(APad),
++                reinterpret_cast<__gm__ float *>(B), m, matElems, maxSweeps);
++        }
++    } else if (rows <= kB && colsWork <= 64 && perCore > 1) {
+         constexpr int32_t kUbBudget = 120 * 1024;   // 实测 K 再大收益很小，保守取 120KB
+         const int32_t perMatBytes = (rows + 4) * colsWork * static_cast<int32_t>(sizeof(float));
+         int32_t K = (perMatBytes > 0) ? (kUbBudget / perMatBytes) : 1;

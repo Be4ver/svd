@@ -1,0 +1,50 @@
+[
+  {
+    "batch": 1,
+    "variant": "baseline",
+    "full_verify_pass": true,
+    "median_ms": 3.62284,
+    "min_ms": 3.62196,
+    "max_ms": 3.6395
+  },
+  {
+    "batch": 1,
+    "variant": "resident",
+    "full_verify_pass": true,
+    "median_ms": 3.50662,
+    "min_ms": 3.50586,
+    "max_ms": 3.51922
+  },
+  {
+    "batch": 1,
+    "variant": "tournament",
+    "full_verify_pass": true,
+    "median_ms": 0.8507,
+    "min_ms": 0.85016,
+    "max_ms": 0.85132
+  },
+  {
+    "batch": 40,
+    "variant": "baseline",
+    "full_verify_pass": true,
+    "median_ms": 3.948,
+    "min_ms": 3.94742,
+    "max_ms": 3.96382
+  },
+  {
+    "batch": 40,
+    "variant": "resident",
+    "full_verify_pass": true,
+    "median_ms": 3.81564,
+    "min_ms": 3.81488,
+    "max_ms": 3.81642
+  },
+  {
+    "batch": 40,
+    "variant": "tournament",
+    "full_verify_pass": true,
+    "median_ms": 0.94694,
+    "min_ms": 0.94652,
+    "max_ms": 0.94748
+  }
+]

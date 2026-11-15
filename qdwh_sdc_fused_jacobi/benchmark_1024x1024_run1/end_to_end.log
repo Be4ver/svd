@@ -1,0 +1,21 @@
+{
+  "shape": [
+    1024,
+    1024
+  ],
+  "input_sha256": "85fc2c0fe97662975ad9898edb7d0cd9bf81c46eaeae1abf3333253537a0c4ad",
+  "expected_count": 1024,
+  "sigma_count": 1024,
+  "finite": true,
+  "nonnegative": true,
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "max_abs": 1.383862936576996e-06,
+  "rel_l2": 5.170155676964772e-07,
+  "max_relative": 3.5593036559329244e-06,
+  "expected_min": 0.009000000119916897,
+  "expected_max": 0.8999999995258218,
+  "got_min": 0.009000001475214958,
+  "got_max": 0.8999999165534973,
+  "pass": true
+}
