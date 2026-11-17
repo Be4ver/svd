@@ -1,0 +1,7 @@
+build*/
+input/
+output/
+artifacts/
+__pycache__/
+*.log
+logs/
