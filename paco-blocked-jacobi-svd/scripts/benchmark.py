@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tune block/local sweeps and compare CLI latency against the PACO baseline.
+"""Tune block size and compare CLI latency against the PACO baseline.
 
 Inputs and outputs stay under --artifacts; logs are collected under project logs/.
 """
@@ -24,8 +24,8 @@ def main():
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--artifacts", type=Path, default=Path("artifacts/benchmark"))
     parser.add_argument("--tune", action="store_true")
-    parser.add_argument("--blocks", type=int, nargs="+", choices=(16, 32))
-    parser.add_argument("--locals", type=int, nargs="+")
+    parser.add_argument("--blocks", type=int, nargs="+", choices=(16, 32, 64))
+    parser.add_argument("--locals", type=int, nargs="+", choices=(1,))
     args = parser.parse_args()
     args.artifacts.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(20261116)
@@ -39,10 +39,10 @@ def main():
         # The PACO CLI's WriteFile does not create its output directory.
         (root / "output").mkdir(exist_ok=True)
         a.tofile(inp / "A_batch.bin")
-        configurations = [(16, 8)]
-        if args.tune: configurations = [(block, local) for block in (16, 32) for local in (1, 2, 4, 8)]
+        configurations = [(16, 1)]
+        if args.tune: configurations = [(block, 1) for block in (16, 32, 64)]
         if args.blocks or args.locals:
-            configurations = [(block, local) for block in (args.blocks or [16]) for local in (args.locals or [8])]
+            configurations = [(block, local) for block in (args.blocks or [16]) for local in (args.locals or [1])]
         for block, local in configurations:
             output = root / f"blocked_b{block}_s{local}"
             cmd = [str(args.exe.resolve()), str(args.device), str(m), str(n), str(batch), "0", "40",

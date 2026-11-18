@@ -1,0 +1,44 @@
+template <typename T>
+__aicore__ inline void CopyIntrinsicsImpl(__ubuf__ T* dst, __ubuf__ T* src, uint8_t repeatTimes,
+    const CopyRepeatParams& repeatParams)
+{
+    ASCENDC_CHECK_VALUE_RANGE(repeatParams.srcRepeatSize, 0, UINT12_MAX, "srcRepeatSize", "Copy");
+    ASCENDC_CHECK_VALUE_RANGE(repeatParams.dstRepeatSize, 0, UINT12_MAX, "dstRepeatSize", "Copy");
+    if constexpr(sizeof(T) == B16_BYTE_SIZE) {
+        vcopy((__ubuf__ uint16_t*)dst, (__ubuf__ uint16_t*)src, repeatTimes, repeatParams.dstStride,
+            repeatParams.srcStride, repeatParams.dstRepeatSize, repeatParams.srcRepeatSize);
+    } else if constexpr(sizeof(T) == B32_BYTE_SIZE) {
+        vcopy((__ubuf__ uint32_t*)dst, (__ubuf__ uint32_t*)src, repeatTimes, repeatParams.dstStride,
+            repeatParams.srcStride, repeatParams.dstRepeatSize, repeatParams.srcRepeatSize);
+    } else {
+        ASCENDC_ASSERT(false, {KERNEL_LOG(KERNEL_ERROR, "Failed to check dtype in Copy, current api support dtype "
+            "combination is src and dst both: int16_t / uint16_t / half / bfloat16_t / int32_t / uint32_t / float");});
+    }
+}
+
+// Copy::Level 0 - mask bit mode
+template <typename T, bool isSetMask = true>
+__aicore__ inline void CopyImpl(__ubuf__ T* dst, __ubuf__ T* src, const uint64_t mask[], uint8_t repeatTimes,
+    const CopyRepeatParams& repeatParams)
+{
+    if ASCEND_IS_AIV {
+        AscendCUtils::SetMask<T, isSetMask>(mask[1], mask[0]);
+        CopyIntrinsicsImpl(dst, src, repeatTimes, repeatParams);
+    }
+}
+
+// Copy::Level 0 - mask count mode
+template <typename T, bool isSetMask = true>
+__aicore__ inline void CopyImpl(__ubuf__ T* dst, __ubuf__ T* src, uint64_t mask, uint8_t repeatTimes,
+    const CopyRepeatParams& repeatParams)
+{
+    if ASCEND_IS_AIV {
+        AscendCUtils::SetMask<T, isSetMask>(mask);
+        CopyIntrinsicsImpl(dst, src, repeatTimes, repeatParams);
+    }
+}
+
+// -------- l1 to l0c --------
+// ---- matrix ----
+template <typename DstT, typename SrcT>
+__aicore__ inline void DataCopyL12L0CImpl(__cc__ DstT* dst, __cbuf__ SrcT* src, const DataCopyParams& intriParams,

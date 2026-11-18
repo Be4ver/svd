@@ -1,0 +1,1760 @@
+[
+  {
+    "case": "explicit_even",
+    "sigma_max_abs": 1.1715366209585909e-05,
+    "b_orth": 9.422401814661282e-08,
+    "vt_orth": 2.54611785210912e-07,
+    "reconstruction": 3.979405274705799e-07,
+    "energy_relative": 4.394880562149204e-08,
+    "right_eigen_residual": 1.1738871972380683e-06,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": true,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 17,
+        "pipeline_groups": [
+          4,
+          4
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 4,
+          "gram_aic": 4,
+          "apply_aic": 16
+        },
+        "padded_cube_flops": 968884224,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          14.8386002,
+          13.9757204,
+          13.9574003
+        ],
+        "operator_wall_ms": [
+          15.317729,
+          14.19362,
+          14.181841
+        ]
+      },
+      "serial": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 968884224,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          8.07135963,
+          7.37629986,
+          7.38240004
+        ],
+        "operator_wall_ms": [
+          8.403155,
+          7.557749,
+          7.516959
+        ]
+      },
+      "legacy": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 968884224,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          8.05305958,
+          7.35676003,
+          7.33470011
+        ],
+        "operator_wall_ms": [
+          8.379785,
+          7.463338,
+          7.432228
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "auto_small",
+    "sigma_max_abs": 1.2551092932966412e-05,
+    "b_orth": 1.0518672072831037e-07,
+    "vt_orth": 2.451992906493672e-07,
+    "reconstruction": 4.102343188497416e-07,
+    "energy_relative": 2.413576931726379e-08,
+    "right_eigen_residual": 1.203038941809e-06,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 8,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 8
+        },
+        "padded_cube_flops": 968884224,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          7.98842001,
+          7.3389802,
+          7.34598017
+        ],
+        "operator_wall_ms": [
+          8.315925,
+          7.473398,
+          7.463038
+        ]
+      },
+      "serial": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 968884224,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          8.20005989,
+          7.3743,
+          7.38221979
+        ],
+        "operator_wall_ms": [
+          8.563866,
+          7.501738,
+          7.489148
+        ]
+      },
+      "legacy": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 968884224,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          8.18035984,
+          7.37092018,
+          7.35410023
+        ],
+        "operator_wall_ms": [
+          8.509417,
+          7.467119,
+          7.460148
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "explicit_uneven",
+    "sigma_max_abs": 1.0280138361906666e-05,
+    "b_orth": 9.193723657727018e-08,
+    "vt_orth": 2.3570808926898223e-07,
+    "reconstruction": 3.797113328328994e-07,
+    "energy_relative": 9.080150625079383e-08,
+    "right_eigen_residual": 9.501143164788758e-07,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 128,
+        "cols": 129,
+        "batch": 3,
+        "aiv": 4,
+        "aic": 2,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 160,
+        "rounds_per_sweep": 7,
+        "phase_overlap": true,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 37,
+        "pipeline_groups": [
+          5,
+          7
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 96,
+          "gram": 12,
+          "parameters": 12,
+          "apply": 48
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 4,
+          "parameters_aiv": 4,
+          "gram_aic": 2,
+          "apply_aic": 2
+        },
+        "padded_cube_flops": 605552640,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          11.7286196,
+          11.1635799,
+          11.1173801
+        ],
+        "operator_wall_ms": [
+          12.064343,
+          11.318698,
+          11.273658
+        ]
+      },
+      "serial": {
+        "rows": 128,
+        "cols": 129,
+        "batch": 3,
+        "aiv": 4,
+        "aic": 2,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 160,
+        "rounds_per_sweep": 7,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 30,
+        "pipeline_groups": [
+          12,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 96,
+          "gram": 12,
+          "parameters": 12,
+          "apply": 48
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 4,
+          "parameters_aiv": 4,
+          "gram_aic": 2,
+          "apply_aic": 2
+        },
+        "padded_cube_flops": 605552640,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          9.80801964,
+          9.15991974,
+          9.15056038
+        ],
+        "operator_wall_ms": [
+          10.126559,
+          9.276462,
+          9.266342
+        ]
+      },
+      "legacy": {
+        "rows": 128,
+        "cols": 129,
+        "batch": 3,
+        "aiv": 4,
+        "aic": 2,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 11,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 160,
+        "rounds_per_sweep": 7,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 30,
+        "pipeline_groups": [
+          12,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 96,
+          "gram": 12,
+          "parameters": 12,
+          "apply": 48
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 4,
+          "parameters_aiv": 4,
+          "gram_aic": 2,
+          "apply_aic": 2
+        },
+        "padded_cube_flops": 605552640,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          9.97819996,
+          9.13105965,
+          9.10577965
+        ],
+        "operator_wall_ms": [
+          10.406591,
+          9.260562,
+          9.223201
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "odd_two_aiv",
+    "sigma_max_abs": 2.8839605352715125e-06,
+    "b_orth": 6.49286017196649e-08,
+    "vt_orth": 2.1573322062096167e-07,
+    "reconstruction": 1.9953758696154537e-07,
+    "energy_relative": 5.705373125615216e-08,
+    "right_eigen_residual": 6.168125944873444e-07,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 32,
+        "cols": 48,
+        "batch": 5,
+        "aiv": 2,
+        "aic": 1,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 9,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 32,
+        "cols_pad": 64,
+        "rounds_per_sweep": 1,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          5,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 40,
+          "gram": 5,
+          "parameters": 5,
+          "apply": 10
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 2,
+          "parameters_aiv": 2,
+          "gram_aic": 1,
+          "apply_aic": 1
+        },
+        "padded_cube_flops": 11796480,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          2.55870008,
+          1.75256002,
+          1.72099996
+        ],
+        "operator_wall_ms": [
+          2.925013,
+          1.851064,
+          1.811184
+        ]
+      },
+      "serial": {
+        "rows": 32,
+        "cols": 48,
+        "batch": 5,
+        "aiv": 2,
+        "aic": 1,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 9,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 32,
+        "cols_pad": 64,
+        "rounds_per_sweep": 1,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 6,
+        "pipeline_groups": [
+          5,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 40,
+          "gram": 5,
+          "parameters": 5,
+          "apply": 10
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 2,
+          "parameters_aiv": 2,
+          "gram_aic": 1,
+          "apply_aic": 1
+        },
+        "padded_cube_flops": 11796480,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          2.45011997,
+          1.70192003,
+          1.69219995
+        ],
+        "operator_wall_ms": [
+          2.766702,
+          1.783114,
+          1.776864
+        ]
+      },
+      "legacy": {
+        "rows": 32,
+        "cols": 48,
+        "batch": 5,
+        "aiv": 2,
+        "aic": 1,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 9,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 32,
+        "cols_pad": 64,
+        "rounds_per_sweep": 1,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 6,
+        "pipeline_groups": [
+          5,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 40,
+          "gram": 5,
+          "parameters": 5,
+          "apply": 10
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 2,
+          "parameters_aiv": 2,
+          "gram_aic": 1,
+          "apply_aic": 1
+        },
+        "padded_cube_flops": 11796480,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          2.4346199,
+          1.69635999,
+          1.69024003
+        ],
+        "operator_wall_ms": [
+          2.730991,
+          1.779064,
+          1.769924
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "singleton",
+    "sigma_max_abs": 5.184294291638025e-07,
+    "b_orth": 1.9371898565026357e-08,
+    "vt_orth": 1.8349510377824174e-07,
+    "reconstruction": 1.0635046375090881e-07,
+    "energy_relative": 3.7218316247992583e-08,
+    "right_eigen_residual": 1.7197474181121191e-07,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 7,
+        "cols": 9,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 5,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 64,
+        "cols_pad": 32,
+        "rounds_per_sweep": 1,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          1,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 16,
+          "gram": 1,
+          "parameters": 1,
+          "apply": 2
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 1,
+          "parameters_aiv": 1,
+          "gram_aic": 1,
+          "apply_aic": 1
+        },
+        "padded_cube_flops": 2621440,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          2.36689997,
+          1.60995996,
+          1.59814
+        ],
+        "operator_wall_ms": [
+          2.664641,
+          1.680013,
+          1.660872
+        ]
+      },
+      "serial": {
+        "rows": 7,
+        "cols": 9,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 5,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 64,
+        "cols_pad": 32,
+        "rounds_per_sweep": 1,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 6,
+        "pipeline_groups": [
+          1,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 16,
+          "gram": 1,
+          "parameters": 1,
+          "apply": 2
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 16,
+          "parameters_aiv": 1,
+          "gram_aic": 1,
+          "apply_aic": 2
+        },
+        "padded_cube_flops": 2621440,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          2.49392009,
+          1.65901995,
+          1.65784001
+        ],
+        "operator_wall_ms": [
+          2.877732,
+          1.764694,
+          1.755544
+        ]
+      },
+      "legacy": {
+        "rows": 7,
+        "cols": 9,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 5,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 64,
+        "cols_pad": 32,
+        "rounds_per_sweep": 1,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 6,
+        "pipeline_groups": [
+          1,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 16,
+          "gram": 1,
+          "parameters": 1,
+          "apply": 2
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 16,
+          "parameters_aiv": 1,
+          "gram_aic": 1,
+          "apply_aic": 2
+        },
+        "padded_cube_flops": 2621440,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          2.4651401,
+          1.65098,
+          1.64359999
+        ],
+        "operator_wall_ms": [
+          2.828402,
+          1.732764,
+          1.727914
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "fixed_zero",
+    "sigma_max_abs": 0.0,
+    "b_orth": 0.0,
+    "vt_orth": 0.0,
+    "reconstruction": 0.0,
+    "energy_relative": 0.0,
+    "right_eigen_residual": 0.0,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 65,
+        "cols": 33,
+        "batch": 3,
+        "aiv": 40,
+        "aic": 20,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 30,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 96,
+        "cols_pad": 64,
+        "rounds_per_sweep": 5,
+        "phase_overlap": true,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 27,
+        "pipeline_groups": [
+          5,
+          4
+        ],
+        "fixed_sweeps": true,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 72,
+          "gram": 9,
+          "parameters": 9,
+          "apply": 18
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 5,
+          "gram_aic": 5,
+          "apply_aic": 10
+        },
+        "padded_cube_flops": 353894400,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          13.1962004,
+          12.5514803,
+          12.5509195
+        ],
+        "operator_wall_ms": [
+          13.595166,
+          12.748829,
+          12.724369
+        ]
+      },
+      "serial": {
+        "rows": 65,
+        "cols": 33,
+        "batch": 3,
+        "aiv": 40,
+        "aic": 20,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 30,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 96,
+        "cols_pad": 64,
+        "rounds_per_sweep": 5,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 22,
+        "pipeline_groups": [
+          9,
+          0
+        ],
+        "fixed_sweeps": true,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 72,
+          "gram": 9,
+          "parameters": 9,
+          "apply": 18
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 9,
+          "gram_aic": 9,
+          "apply_aic": 18
+        },
+        "padded_cube_flops": 353894400,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          7.8633399,
+          7.11518002,
+          7.11390018
+        ],
+        "operator_wall_ms": [
+          8.216084,
+          7.249006,
+          7.233256
+        ]
+      },
+      "legacy": {
+        "rows": 65,
+        "cols": 33,
+        "batch": 3,
+        "aiv": 40,
+        "aic": 20,
+        "block": 16,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 30,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 96,
+        "cols_pad": 64,
+        "rounds_per_sweep": 5,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 22,
+        "pipeline_groups": [
+          9,
+          0
+        ],
+        "fixed_sweeps": true,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 72,
+          "gram": 9,
+          "parameters": 9,
+          "apply": 18
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 9,
+          "gram_aic": 9,
+          "apply_aic": 18
+        },
+        "padded_cube_flops": 353894400,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          7.81048012,
+          7.04080009,
+          7.03915977
+        ],
+        "operator_wall_ms": [
+          8.121793,
+          7.138036,
+          7.164296
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "fixed_random",
+    "sigma_max_abs": 7.186278377702138e-06,
+    "b_orth": 9.873495877319367e-08,
+    "vt_orth": 2.1780376080471342e-07,
+    "reconstruction": 4.0710774302283714e-07,
+    "energy_relative": 5.5323072414160096e-08,
+    "right_eigen_residual": 1.1763759764773424e-06,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 128,
+        "cols": 81,
+        "batch": 3,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 30,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 96,
+        "rounds_per_sweep": 3,
+        "phase_overlap": true,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 17,
+        "pipeline_groups": [
+          1,
+          5
+        ],
+        "fixed_sweeps": true,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 96,
+          "gram": 6,
+          "parameters": 6,
+          "apply": 12
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 5,
+          "gram_aic": 5,
+          "apply_aic": 10
+        },
+        "padded_cube_flops": 849346560,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          37.9995995,
+          37.3398018,
+          37.3389015
+        ],
+        "operator_wall_ms": [
+          38.372549,
+          37.529782,
+          37.502882
+        ]
+      },
+      "serial": {
+        "rows": 128,
+        "cols": 81,
+        "batch": 3,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 30,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 96,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          6,
+          0
+        ],
+        "fixed_sweeps": true,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 96,
+          "gram": 6,
+          "parameters": 6,
+          "apply": 12
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 6,
+          "gram_aic": 6,
+          "apply_aic": 12
+        },
+        "padded_cube_flops": 849346560,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          20.3126392,
+          19.4820004,
+          19.4952393
+        ],
+        "operator_wall_ms": [
+          20.772012,
+          19.706144,
+          19.771464
+        ]
+      },
+      "legacy": {
+        "rows": 128,
+        "cols": 81,
+        "batch": 3,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 30,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 96,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          6,
+          0
+        ],
+        "fixed_sweeps": true,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 96,
+          "gram": 6,
+          "parameters": 6,
+          "apply": 12
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 6,
+          "gram_aic": 6,
+          "apply_aic": 12
+        },
+        "padded_cube_flops": 849346560,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          20.2693195,
+          19.4435196,
+          19.4679794
+        ],
+        "operator_wall_ms": [
+          20.748071,
+          19.668463,
+          19.652863
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "full_grid_auto",
+    "sigma_max_abs": 3.4171199494892335e-05,
+    "b_orth": 1.0674454883529661e-07,
+    "vt_orth": 2.788833874944885e-07,
+    "reconstruction": 8.260513342110707e-07,
+    "energy_relative": 4.939251843561277e-08,
+    "right_eigen_residual": 1.989842612860602e-06,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 512,
+        "cols": 512,
+        "batch": 8,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 16,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 512,
+        "cols_pad": 512,
+        "rounds_per_sweep": 15,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          64,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 64,
+          "parameters": 64,
+          "apply": 512
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 40,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 128849018880,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          84.5321198,
+          83.7175827,
+          83.6981583
+        ],
+        "operator_wall_ms": [
+          85.048711,
+          83.935023,
+          83.896562
+        ]
+      },
+      "serial": {
+        "rows": 512,
+        "cols": 512,
+        "batch": 8,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 16,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 512,
+        "cols_pad": 512,
+        "rounds_per_sweep": 15,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 62,
+        "pipeline_groups": [
+          64,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 64,
+          "parameters": 64,
+          "apply": 512
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 40,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 128849018880,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          85.6345825,
+          84.7791595,
+          84.7857819
+        ],
+        "operator_wall_ms": [
+          86.13656,
+          85.004882,
+          85.004841
+        ]
+      },
+      "legacy": {
+        "rows": 512,
+        "cols": 512,
+        "batch": 8,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 16,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 512,
+        "cols_pad": 512,
+        "rounds_per_sweep": 15,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 62,
+        "pipeline_groups": [
+          64,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 64,
+          "parameters": 64,
+          "apply": 512
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 40,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 128849018880,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          85.3782578,
+          84.5012817,
+          84.4990234
+        ],
+        "operator_wall_ms": [
+          85.918358,
+          84.731559,
+          84.728869
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "full_grid_40",
+    "sigma_max_abs": 2.8948855465671386e-05,
+    "b_orth": 1.1061470970766759e-07,
+    "vt_orth": 2.8376326044465827e-07,
+    "reconstruction": 8.109995925919813e-07,
+    "energy_relative": 5.667959757241551e-08,
+    "right_eigen_residual": 1.8877420681431107e-06,
+    "right_eigen_normalization": "reference_spectral_norm_squared",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 512,
+        "cols": 512,
+        "batch": 8,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 17,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 512,
+        "cols_pad": 512,
+        "rounds_per_sweep": 15,
+        "phase_overlap": true,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 77,
+        "pipeline_groups": [
+          40,
+          24
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 64,
+          "parameters": 64,
+          "apply": 512
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 40,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 136902082560,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          91.417099,
+          90.5899811,
+          90.5922012
+        ],
+        "operator_wall_ms": [
+          91.860305,
+          90.763246,
+          90.750546
+        ]
+      },
+      "serial": {
+        "rows": 512,
+        "cols": 512,
+        "batch": 8,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 17,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 512,
+        "cols_pad": 512,
+        "rounds_per_sweep": 15,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 62,
+        "pipeline_groups": [
+          64,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 64,
+          "parameters": 64,
+          "apply": 512
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 40,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 136902082560,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          90.5746002,
+          89.9392014,
+          89.9187164
+        ],
+        "operator_wall_ms": [
+          90.988348,
+          90.106691,
+          90.10506
+        ]
+      },
+      "legacy": {
+        "rows": 512,
+        "cols": 512,
+        "batch": 8,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 17,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 512,
+        "cols_pad": 512,
+        "rounds_per_sweep": 15,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 62,
+        "pipeline_groups": [
+          64,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 64,
+          "parameters": 64,
+          "apply": 512
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 40,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 136902082560,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          90.6659622,
+          89.6798019,
+          89.6735382
+        ],
+        "operator_wall_ms": [
+          91.181919,
+          89.889809,
+          89.90804
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "not_converged",
+    "pass": true,
+    "execution": {
+      "overlap": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 1,
+        "converged": false,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": true,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 17,
+        "pipeline_groups": [
+          4,
+          4
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 4,
+          "gram_aic": 4,
+          "apply_aic": 16
+        },
+        "padded_cube_flops": 88080384,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          2.37436008,
+          1.57537997,
+          1.56692004
+        ],
+        "operator_wall_ms": [
+          2.725941,
+          1.666423,
+          1.648173
+        ]
+      },
+      "serial": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 1,
+        "converged": false,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 88080384,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          1.81187999,
+          0.973240018,
+          0.967700005
+        ],
+        "operator_wall_ms": [
+          2.150326,
+          1.049928,
+          1.031388
+        ]
+      },
+      "legacy": {
+        "rows": 128,
+        "cols": 193,
+        "batch": 4,
+        "aiv": 40,
+        "aic": 20,
+        "block": 32,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 1,
+        "converged": false,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 128,
+        "cols_pad": 224,
+        "rounds_per_sweep": 3,
+        "phase_overlap": false,
+        "core_local_pipeline": false,
+        "identity_apply_elision": false,
+        "synchronization": "global_phases",
+        "global_barriers_per_sweep": 14,
+        "pipeline_groups": [
+          8,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 128,
+          "gram": 8,
+          "parameters": 8,
+          "apply": 32
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 40,
+          "parameters_aiv": 8,
+          "gram_aic": 8,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 88080384,
+        "work_estimates_are_upper_bounds": false,
+        "stream_ms": [
+          1.89289999,
+          0.988860011,
+          0.979499996
+        ],
+        "operator_wall_ms": [
+          2.261058,
+          1.087458,
+          1.058688
+        ]
+      }
+    },
+    "bitwise_equal": true
+  },
+  {
+    "case": "invalid_options",
+    "pass": true,
+    "rejected": 5
+  }
+]

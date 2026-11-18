@@ -1,0 +1,682 @@
+{
+  "static": {
+    "passed": 12,
+    "total": 12
+  },
+  "sweep": {
+    "passed": 15,
+    "total": 15
+  },
+  "npu": {
+    "passed": 31,
+    "total": 31
+  },
+  "block64": {
+    "passed": 9,
+    "total": 9
+  },
+  "control": {
+    "passed": 7,
+    "total": 7
+  },
+  "prepare": {
+    "passed": 12,
+    "total": 12
+  },
+  "gram": {
+    "passed": 12,
+    "total": 12
+  },
+  "inactive": {
+    "passed": 8,
+    "total": 8
+  },
+  "overlap": {
+    "passed": 11,
+    "total": 11
+  },
+  "prepare_baseline_bitwise_equal": true,
+  "benchmark": {
+    "input_sha256": "8485da69127c68fe91b3a84082c00b678f9a1842f83d4f6aff366c66df49867d",
+    "tolerance": 1.1920928955078125e-07,
+    "historical_ms": 966.515,
+    "runs": [
+      {
+        "name": "baseline",
+        "command": [
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/ub-copy-start/jacobi_svd_baseline",
+          "0",
+          "4096",
+          "4096",
+          "1",
+          "0",
+          "40",
+          "--block",
+          "64",
+          "--repeat",
+          "4",
+          "--input-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/exact-sweep-4096/input",
+          "--output-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/scalar-pipeline/4096/output"
+        ],
+        "executable_sha256": "086f85ec657a1b504fe54a9eef1ece16d24acbfd3719bdbc338e0089df34bd4f",
+        "rows": 4096,
+        "cols": 4096,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 64,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 25,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 4096,
+        "cols_pad": 4096,
+        "rounds_per_sweep": 63,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          32,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 32,
+          "parameters": 32,
+          "apply": 2048
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 32,
+          "parameters_aiv": 32,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 13529146982400,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          622.895813,
+          621.172363,
+          621.862854,
+          621.980286
+        ],
+        "operator_wall_ms": [
+          623.44578,
+          621.447724,
+          622.125279,
+          622.23995
+        ],
+        "hashes": {
+          "B_rot.bin": "3f914843fc7929ac18c5119ad833abb293cff479e37afe7bd1ae5772add1b403",
+          "sigma.bin": "d71d2549ec6a2f49cc15f29ae6bf63ec193145c6117d278a562c7b397faab057",
+          "Vt.bin": "8abba76d8c8735bc7feb638cccbabc8150a1edc4cd386fd3519a9e024afdba37"
+        }
+      },
+      {
+        "name": "candidate",
+        "command": [
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/build-core-local/jacobi_svd_main",
+          "0",
+          "4096",
+          "4096",
+          "1",
+          "0",
+          "40",
+          "--block",
+          "64",
+          "--repeat",
+          "4",
+          "--input-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/exact-sweep-4096/input",
+          "--output-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/scalar-pipeline/4096/output"
+        ],
+        "executable_sha256": "2cf431b74a26217ddc87f9b1fa7ced87c13e66d6ec353a9943fb73af8fbedaf1",
+        "rows": 4096,
+        "cols": 4096,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 64,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 25,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 4096,
+        "cols_pad": 4096,
+        "rounds_per_sweep": 63,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          32,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 32,
+          "parameters": 32,
+          "apply": 2048
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 32,
+          "parameters_aiv": 32,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 13529146982400,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          616.088684,
+          615.790527,
+          615.403381,
+          615.860962
+        ],
+        "operator_wall_ms": [
+          616.538245,
+          616.022632,
+          615.629109,
+          616.075822
+        ],
+        "hashes": {
+          "B_rot.bin": "3f914843fc7929ac18c5119ad833abb293cff479e37afe7bd1ae5772add1b403",
+          "sigma.bin": "d71d2549ec6a2f49cc15f29ae6bf63ec193145c6117d278a562c7b397faab057",
+          "Vt.bin": "8abba76d8c8735bc7feb638cccbabc8150a1edc4cd386fd3519a9e024afdba37"
+        }
+      },
+      {
+        "name": "candidate",
+        "command": [
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/build-core-local/jacobi_svd_main",
+          "0",
+          "4096",
+          "4096",
+          "1",
+          "0",
+          "40",
+          "--block",
+          "64",
+          "--repeat",
+          "4",
+          "--input-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/exact-sweep-4096/input",
+          "--output-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/scalar-pipeline/4096/output"
+        ],
+        "executable_sha256": "2cf431b74a26217ddc87f9b1fa7ced87c13e66d6ec353a9943fb73af8fbedaf1",
+        "rows": 4096,
+        "cols": 4096,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 64,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 25,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 4096,
+        "cols_pad": 4096,
+        "rounds_per_sweep": 63,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          32,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 32,
+          "parameters": 32,
+          "apply": 2048
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 32,
+          "parameters_aiv": 32,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 13529146982400,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          615.406006,
+          614.62854,
+          614.614929,
+          614.16864
+        ],
+        "operator_wall_ms": [
+          615.908581,
+          614.869223,
+          614.827563,
+          614.391669
+        ],
+        "hashes": {
+          "B_rot.bin": "3f914843fc7929ac18c5119ad833abb293cff479e37afe7bd1ae5772add1b403",
+          "sigma.bin": "d71d2549ec6a2f49cc15f29ae6bf63ec193145c6117d278a562c7b397faab057",
+          "Vt.bin": "8abba76d8c8735bc7feb638cccbabc8150a1edc4cd386fd3519a9e024afdba37"
+        }
+      },
+      {
+        "name": "baseline",
+        "command": [
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/ub-copy-start/jacobi_svd_baseline",
+          "0",
+          "4096",
+          "4096",
+          "1",
+          "0",
+          "40",
+          "--block",
+          "64",
+          "--repeat",
+          "4",
+          "--input-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/exact-sweep-4096/input",
+          "--output-dir",
+          "/home/zhushengrui/project/paco-blocked-jacobi-svd/artifacts/scalar-pipeline/4096/output"
+        ],
+        "executable_sha256": "086f85ec657a1b504fe54a9eef1ece16d24acbfd3719bdbc338e0089df34bd4f",
+        "rows": 4096,
+        "cols": 4096,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 64,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 25,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 4096,
+        "cols_pad": 4096,
+        "rounds_per_sweep": 63,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          32,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 32,
+          "parameters": 32,
+          "apply": 2048
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 32,
+          "parameters_aiv": 32,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 13529146982400,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          622.745178,
+          621.259399,
+          621.446533,
+          622.155762
+        ],
+        "operator_wall_ms": [
+          623.236257,
+          621.531925,
+          621.678726,
+          622.393922
+        ],
+        "hashes": {
+          "B_rot.bin": "3f914843fc7929ac18c5119ad833abb293cff479e37afe7bd1ae5772add1b403",
+          "sigma.bin": "d71d2549ec6a2f49cc15f29ae6bf63ec193145c6117d278a562c7b397faab057",
+          "Vt.bin": "8abba76d8c8735bc7feb638cccbabc8150a1edc4cd386fd3519a9e024afdba37"
+        }
+      }
+    ],
+    "fp64_validation": {
+      "sigma_max_abs": 0.00021758097018675926,
+      "b_orth": 1.1156172647752332e-07,
+      "vt_orth": 4.953324777012824e-07,
+      "reconstruction": 2.4150230985094906e-06,
+      "energy_relative": 5.165557291513552e-07,
+      "right_eigen_residual": 4.9017879006615115e-06,
+      "right_eigen_normalization": "reference_spectral_norm_squared"
+    },
+    "candidate_warm_median_ms": 615.0159605,
+    "baseline_warm_median_ms": 621.6546935,
+    "candidate_repeated_bitwise_equal": true,
+    "bitwise_equal_to_baseline": true,
+    "time_reduction_percent": 1.0679132755554432
+  },
+  "final_executable_sha256": "2cf431b74a26217ddc87f9b1fa7ced87c13e66d6ec353a9943fb73af8fbedaf1",
+  "historical_time_reduction_percent": 36.36767556633885,
+  "maximum_single_sweep_relative_B_error": 1.0396188201977875e-05,
+  "profile": {
+    "baseline": {
+      "pass": true,
+      "label": "baseline",
+      "executable_sha256": "086f85ec657a1b504fe54a9eef1ece16d24acbfd3719bdbc338e0089df34bd4f",
+      "operation": {
+        "Device_id": "0",
+        "Model ID": "4294967295",
+        "Task ID": "1",
+        "Stream ID": "46",
+        "Op Name": "blocked_jacobi_fused",
+        "OP Type": "blocked_jacobi_fused",
+        "OP State": "dynamic",
+        "Task Type": "MIX_AIC",
+        "Task Start Time(us)": "1794980666067122.440\t",
+        "Task Duration(us)": "620989.140",
+        "Task Wait Time(us)": "0",
+        "Block Dim": "20",
+        "Mix Block Dim": "40",
+        "HF32 Eligible": "NO",
+        "Input Shapes": "N/A",
+        "Input Data Types": "N/A",
+        "Input Formats": "N/A",
+        "Output Shapes": "N/A",
+        "Output Data Types": "N/A",
+        "Output Formats": "N/A",
+        "Context ID": "0",
+        "aicore_time(us)": "620985.857",
+        "aic_total_cycles": "22355490838",
+        "aic_mac_time(us)": "149248.082",
+        "aic_mac_ratio": "0.24",
+        "aic_scalar_time(us)": "541844.184",
+        "aic_scalar_ratio": "0.873",
+        "aic_mte1_time(us)": "88385.023",
+        "aic_mte1_ratio": "0.142",
+        "aic_mte2_time(us)": "118227.208",
+        "aic_mte2_ratio": "0.19",
+        "aic_fixpipe_time(us)": "86017.351",
+        "aic_fixpipe_ratio": "0.139",
+        "aic_icache_miss_rate": "0.0",
+        "aiv_time(us)": "620985.696",
+        "aiv_total_cycles": "44710970093",
+        "aiv_vec_time(us)": "278118.948",
+        "aiv_vec_ratio": "0.448",
+        "aiv_scalar_time(us)": "186599.759",
+        "aiv_scalar_ratio": "0.3",
+        "aiv_mte2_time(us)": "20465.025",
+        "aiv_mte2_ratio": "0.033",
+        "aiv_mte3_time(us)": "20922.862",
+        "aiv_mte3_ratio": "0.034",
+        "aiv_icache_miss_rate": "0.0",
+        "cube_utilization(%)": "99.999"
+      },
+      "launch_api": [
+        {
+          "Device_id": "host",
+          "Level": "runtime",
+          "API Name": "KernelLaunchWithHandle",
+          "Time(us)": "914.72",
+          "Count": "1",
+          "Avg(us)": "914.72",
+          "Min(us)": "914.72",
+          "Max(us)": "914.72",
+          "Variance": "0"
+        }
+      ],
+      "metrics": {
+        "rows": 4096,
+        "cols": 4096,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 64,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 25,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 4096,
+        "cols_pad": 4096,
+        "rounds_per_sweep": 63,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          32,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 32,
+          "parameters": 32,
+          "apply": 2048
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 32,
+          "parameters_aiv": 32,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 13529146982400,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          622.029846
+        ],
+        "operator_wall_ms": [
+          622.657913
+        ]
+      },
+      "output_hashes": {
+        "B_rot.bin": "3f914843fc7929ac18c5119ad833abb293cff479e37afe7bd1ae5772add1b403",
+        "sigma.bin": "d71d2549ec6a2f49cc15f29ae6bf63ec193145c6117d278a562c7b397faab057",
+        "Vt.bin": "8abba76d8c8735bc7feb638cccbabc8150a1edc4cd386fd3519a9e024afdba37"
+      },
+      "op_csv": "logs/ub-copy/profile-baseline/PROF_000001_20261118054425583_NKDDJKAECKEDHENA/mindstudio_profiler_output/op_summary_20261118054432.csv",
+      "api_csv": "logs/ub-copy/profile-baseline/PROF_000001_20261118054425583_NKDDJKAECKEDHENA/mindstudio_profiler_output/api_statistic_20261118054432.csv",
+      "interpretation": "Scalar includes polling; pipeline times overlap."
+    },
+    "final": {
+      "pass": true,
+      "label": "final",
+      "executable_sha256": "2cf431b74a26217ddc87f9b1fa7ced87c13e66d6ec353a9943fb73af8fbedaf1",
+      "operation": {
+        "Device_id": "0",
+        "Model ID": "4294967295",
+        "Task ID": "1",
+        "Stream ID": "46",
+        "Op Name": "blocked_jacobi_fused",
+        "OP Type": "blocked_jacobi_fused",
+        "OP State": "dynamic",
+        "Task Type": "MIX_AIC",
+        "Task Start Time(us)": "1794980676299257.160\t",
+        "Task Duration(us)": "614974.480",
+        "Task Wait Time(us)": "0",
+        "Block Dim": "20",
+        "Mix Block Dim": "40",
+        "HF32 Eligible": "NO",
+        "Input Shapes": "N/A",
+        "Input Data Types": "N/A",
+        "Input Formats": "N/A",
+        "Output Shapes": "N/A",
+        "Output Data Types": "N/A",
+        "Output Formats": "N/A",
+        "Context ID": "0",
+        "aicore_time(us)": "614971.902",
+        "aic_total_cycles": "22138988481",
+        "aic_mac_time(us)": "149247.941",
+        "aic_mac_ratio": "0.243",
+        "aic_scalar_time(us)": "535893.345",
+        "aic_scalar_ratio": "0.871",
+        "aic_mte1_time(us)": "88368.0",
+        "aic_mte1_ratio": "0.144",
+        "aic_mte2_time(us)": "118291.23",
+        "aic_mte2_ratio": "0.192",
+        "aic_fixpipe_time(us)": "86059.951",
+        "aic_fixpipe_ratio": "0.14",
+        "aic_icache_miss_rate": "0.0",
+        "aiv_time(us)": "614971.204",
+        "aiv_total_cycles": "44277926681",
+        "aiv_vec_time(us)": "273429.303",
+        "aiv_vec_ratio": "0.445",
+        "aiv_scalar_time(us)": "185685.921",
+        "aiv_scalar_ratio": "0.302",
+        "aiv_mte2_time(us)": "20455.74",
+        "aiv_mte2_ratio": "0.033",
+        "aiv_mte3_time(us)": "20896.982",
+        "aiv_mte3_ratio": "0.034",
+        "aiv_icache_miss_rate": "0.0",
+        "cube_utilization(%)": "100.000"
+      },
+      "launch_api": [
+        {
+          "Device_id": "host",
+          "Level": "runtime",
+          "API Name": "KernelLaunchWithHandle",
+          "Time(us)": "726.44",
+          "Count": "1",
+          "Avg(us)": "726.44",
+          "Min(us)": "726.44",
+          "Max(us)": "726.44",
+          "Variance": "0"
+        }
+      ],
+      "metrics": {
+        "rows": 4096,
+        "cols": 4096,
+        "batch": 1,
+        "aiv": 40,
+        "aic": 20,
+        "block": 64,
+        "local_sweeps": 1,
+        "sweep_schedule": "each_pair_once",
+        "sweeps": 25,
+        "converged": true,
+        "kernel_launches_per_run": 1,
+        "device_preprocess": true,
+        "device_postprocess": true,
+        "device_convergence": true,
+        "rows_pad": 4096,
+        "cols_pad": 4096,
+        "rounds_per_sweep": 63,
+        "phase_overlap": false,
+        "core_local_pipeline": true,
+        "identity_apply_elision": true,
+        "synchronization": "block_versions_two_slots",
+        "global_barriers_per_sweep": 2,
+        "pipeline_groups": [
+          32,
+          0
+        ],
+        "fixed_sweeps": false,
+        "pack_rows_per_task": 4,
+        "tasks_per_round": {
+          "pack": 1024,
+          "gram": 32,
+          "parameters": 32,
+          "apply": 2048
+        },
+        "useful_core_upper_bound": {
+          "pack_aiv": 32,
+          "parameters_aiv": 32,
+          "gram_aic": 20,
+          "apply_aic": 20
+        },
+        "padded_cube_flops": 13529146982400,
+        "work_estimates_are_upper_bounds": true,
+        "stream_ms": [
+          615.756958
+        ],
+        "operator_wall_ms": [
+          616.264924
+        ]
+      },
+      "output_hashes": {
+        "B_rot.bin": "3f914843fc7929ac18c5119ad833abb293cff479e37afe7bd1ae5772add1b403",
+        "sigma.bin": "d71d2549ec6a2f49cc15f29ae6bf63ec193145c6117d278a562c7b397faab057",
+        "Vt.bin": "8abba76d8c8735bc7feb638cccbabc8150a1edc4cd386fd3519a9e024afdba37"
+      },
+      "op_csv": "logs/ub-copy/profile-final/PROF_000001_20261118054435846_HHJRMAACLRQLLNLB/mindstudio_profiler_output/op_summary_20261118054442.csv",
+      "api_csv": "logs/ub-copy/profile-final/PROF_000001_20261118054435846_HHJRMAACLRQLLNLB/mindstudio_profiler_output/api_statistic_20261118054442.csv",
+      "interpretation": "Scalar includes polling; pipeline times overlap."
+    }
+  },
+  "pipeline_comparison": {
+    "aic_scalar_time(us)": {
+      "previous_us": 541844.184,
+      "final_us": 535893.345,
+      "reduction_percent": 1.0982565054163285
+    },
+    "aic_mac_time(us)": {
+      "previous_us": 149248.082,
+      "final_us": 149247.941,
+      "reduction_percent": 9.447357588454608e-05
+    },
+    "aic_fixpipe_time(us)": {
+      "previous_us": 86017.351,
+      "final_us": 86059.951,
+      "reduction_percent": -0.04952489178609021
+    },
+    "aiv_scalar_time(us)": {
+      "previous_us": 186599.759,
+      "final_us": 185685.921,
+      "reduction_percent": 0.48973160785271697
+    },
+    "aiv_vec_time(us)": {
+      "previous_us": 278118.948,
+      "final_us": 273429.303,
+      "reduction_percent": 1.6862011861198178
+    },
+    "aiv_mte2_time(us)": {
+      "previous_us": 20465.025,
+      "final_us": 20455.74,
+      "reduction_percent": 0.04537008872453896
+    },
+    "aiv_mte3_time(us)": {
+      "previous_us": 20922.862,
+      "final_us": 20896.982,
+      "reduction_percent": 0.12369244704668603
+    }
+  },
+  "unchanged_other_kernel_sources": [
+    "core_local_pipeline.hpp",
+    "core_local_schedule.hpp",
+    "core_local_sync.hpp",
+    "fused_common.hpp",
+    "fused_cube.hpp",
+    "fused_vector.hpp",
+    "paco_gemm.hpp",
+    "rotation_angles.hpp",
+    "blocked_jacobi_fused.cpp",
+    "main.cpp"
+  ]
+}

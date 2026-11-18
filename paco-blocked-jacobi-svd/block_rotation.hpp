@@ -1,5 +1,7 @@
 #pragma once
 #include "kernel_operator.h"
+#include "rotation_prepare.hpp"
+#include "rotation_angles.hpp"
 #include "block_rotation128.hpp"
 
 namespace blocked_jacobi {
@@ -27,7 +29,7 @@ public:
         identityMask_ = memory[45248].ReinterpretCast<uint8_t>();
         activeMask_ = params_[1088].ReinterpretCast<uint8_t>();
         signMask_ = params_[1120].ReinterpretCast<uint8_t>();
-        prepared_ = false;
+        prepared_ = false; preparedCrossOnly_ = false;
         m2v_ = pipe->FetchEventID(HardEvent::MTE2_V);
         v2m2_ = pipe->FetchEventID(HardEvent::V_MTE2);
         v2s_ = pipe->FetchEventID(HardEvent::V_S);
@@ -40,9 +42,9 @@ public:
 
     __aicore__ inline bool Run(GlobalTensor<float> gram, GlobalTensor<float> rotations,
                                GlobalTensor<float> flags, int32_t job, int32_t d,
-                               int32_t sweeps, float tol)
+                               int32_t sweeps, float tol, bool crossOnly)
     {
-        if (!prepared_) Prepare(d);
+        if (!prepared_ || preparedCrossOnly_ != crossOnly) Prepare(d, crossOnly);
         // A prior job's vector row correction still reads g_. MTE3_V orders
         // later vector work, but cannot stop this independent MTE2 overwrite.
         SetFlag<HardEvent::V_MTE2>(v2m2_); WaitFlag<HardEvent::V_MTE2>(v2m2_);
@@ -54,7 +56,7 @@ public:
         const int32_t pairs = d / 2;
         for (int32_t sweep = 0; sweep < sweeps; ++sweep) {
             Duplicate(params_[960], 0.0f, pairs);
-            for (int32_t round = 0; round < d - 1; ++round) {
+            for (int32_t round = 0; round < (crossOnly ? d / 2 : d - 1); ++round) {
                 Angles(d, tol);
                 RotateRows(trans_, g_, d);
                 RotateRows(rNext_, r_, d);
@@ -90,74 +92,41 @@ public:
     }
 
 private:
-    // Map a position in [P,Q] to the conventional circle order, and back.
-    // This involution makes the initial row order the identity.
-    __aicore__ inline int32_t Circle(int32_t i, int32_t d)
-    { return i < d / 2 ? i : d + d / 2 - 1 - i; }
-    __aicore__ inline int32_t Next(int32_t i, int32_t d)
+    __aicore__ inline void Prepare(int32_t d, bool crossOnly)
     {
-        const int32_t c = Circle(i, d);
-        return Circle(c == 0 ? 0 : (c == 1 ? d - 1 : c - 1), d);
-    }
-    __aicore__ inline void Prepare(int32_t d)
-    {
-        // Initialized once on each AIV, then reused for every panel and round.
-        // These maps lie outside the shared pre/postprocessing scratch region.
-        for (int32_t i = 0; i < d; ++i) {
-            for (int32_t j = 0; j < d; ++j) {
-                transposeIdx_.SetValue(i * d + j, (j * d + i) * sizeof(float));
-                nextTransposeIdx_.SetValue(i * d + j, (Next(j, d) * d + Next(i, d)) * sizeof(float));
-                nextRowIdx_.SetValue(i * d + j, (Next(i, d) * d + j) * sizeof(float));
-            }
-        }
-        for (int32_t i = 0; i < d / 2; ++i) {
-            aIdx_.SetValue(i, (i * d + i) * sizeof(float));
-            bIdx_.SetValue(i, ((i + d / 2) * d + i + d / 2) * sizeof(float));
-            cIdx_.SetValue(i, (i * d + i + d / 2) * sizeof(float));
-        }
-        for (int32_t i = 0; i < d * d / 8; ++i) {
-            const int32_t diagonal = (i * 8 + d) / (d + 1);
-            const int32_t bit = diagonal * (d + 1) - i * 8;
-            identityMask_.SetValue(i, bit < 8 ? static_cast<uint8_t>(1U << bit) : 0);
-        }
+        // Order prior scalar accesses to shared scratch before vector reuse.
         SetFlag<HardEvent::S_V>(s2v_); WaitFlag<HardEvent::S_V>(s2v_);
-        prepared_ = true;
+        auto sequence = tmp_, next = tmp_[128];
+        rotation_prepare::Templates(sequence, next, tmp2_, activeMask_, d, crossOnly);
+        rotation_prepare::Pivots(aIdx_, bIdx_, cIdx_, sequence, tmp2_, d);
+        rotation_prepare::Grids(r_, g_, sequence, tmp2_, d);
+        Compare(identityMask_, g_, r_, CMPMODE::EQ, d * d);
+        Muls(g_, g_, static_cast<float>(d * 4), d * d);
+        Muls(r_, r_, 4.0f, d * d);
+        Add(trans_, g_, r_, d * d);
+        rotation_prepare::Indices(transposeIdx_, trans_, d * d);
+
+        rotation_prepare::Grids(r_, g_, next, tmp2_, d);
+        Muls(g_, g_, static_cast<float>(d * 4), d * d);
+        Muls(r_, r_, 4.0f, d * d);
+        Add(trans_, g_, r_, d * d);
+        rotation_prepare::Indices(nextTransposeIdx_, trans_, d * d);
+        Muls(r_, r_, static_cast<float>(d), d * d);
+        rotation_prepare::Columns(g_, sequence, d);
+        Muls(g_, g_, 4.0f, d * d);
+        Add(trans_, r_, g_, d * d);
+        rotation_prepare::Indices(nextRowIdx_, trans_, d * d);
+        prepared_ = true; preparedCrossOnly_ = crossOnly;
     }
     __aicore__ inline void Angles(int32_t d, float tol)
     {
         const int32_t n = d / 2;
-        auto a = params_, b = params_[64], c = params_[128];
-        auto delta = params_[192], ad = params_[256], ac = params_[320];
-        auto scale = params_[384], u = params_[448], v = params_[512];
-        auto denom = params_[576], t = params_[640], cs = params_[704], sn = params_[768];
-        auto one = params_[832], active = params_[896], accum = params_[960];
-        Gather(a, g_, aIdx_, 0, n);
-        Gather(b, g_, bIdx_, 0, n);
-        Gather(c, g_, cIdx_, 0, n);
-        Mul(u, a, b, n); Abs(u, u, n); Sqrt(u, u, n);
-        Muls(u, u, tol, n); Adds(u, u, 1e-30f, n);
-        Abs(ac, c, n);
-        // C220 count-mode Compare truncates count/64; n is only 16 or 32.
-        // Issue one full repeat, then consume only the first n predicate bits.
-        Compare(activeMask_, ac, u, CMPMODE::GT, uint64_t(64), 1, {1, 1, 1, 8, 8, 8});
-        Duplicate(one, 1.0f, n);
-        Select(active, activeMask_, one, 0.0f, SELMODE::VSEL_TENSOR_SCALAR_MODE, n);
-        Max(accum, accum, active, n);
-        Sub(delta, b, a, n); Muls(delta, delta, 0.5f, n); Abs(ad, delta, n);
-        Max(scale, ad, ac, n); Maxs(scale, scale, 1e-30f, n);
-        Div(u, delta, scale, n); Div(v, c, scale, n);
-        Mul(u, u, u, n); Mul(v, v, v, n); Add(u, u, v, n);
-        Sqrt(u, u, n); Mul(u, u, scale, n); Add(denom, ad, u, n);
-        Maxs(denom, denom, 1e-30f, n);
-        Div(t, c, denom, n);
-        Muls(v, t, -1.0f, n);
-        CompareScalar(signMask_, delta, 0.0f, CMPMODE::GE, uint64_t(64), 1, {1, 1, 8, 8});
-        Select(t, signMask_, t, v, SELMODE::VSEL_TENSOR_TENSOR_MODE, n);
-        Select(t, activeMask_, t, 0.0f, SELMODE::VSEL_TENSOR_SCALAR_MODE, n);
-        Mul(u, t, t, n); Adds(u, u, 1.0f, n); Sqrt(u, u, n);
-        Div(cs, one, u, n); Mul(sn, cs, t, n);
-        BroadcastRows(cos_, cs, n, d);
-        BroadcastRows(sin_, sn, n, d);
+        Gather(params_, g_, aIdx_, 0, n);
+        Gather(params_[64], g_, bIdx_, 0, n);
+        Gather(params_[128], g_, cIdx_, 0, n);
+        RotationAngles(params_, activeMask_, signMask_, n, tol);
+        BroadcastRows(cos_, params_[704], n, d);
+        BroadcastRows(sin_, params_[768], n, d);
     }
     __aicore__ inline void BroadcastRows(LocalTensor<float> dst, LocalTensor<float> src,
                                         int32_t rows, int32_t d)
@@ -165,11 +134,12 @@ private:
         Brcb(tmp_, src, rows / 8, {1, 8});
         Brcb(broadcast_, tmp_, rows, {1, 8});
         // Broadcast to 64 columns, then compact to 32 columns for block16.
-        Adds(dst, broadcast_, 0.0f, static_cast<uint64_t>(d), rows,
+        Copy(dst, broadcast_, static_cast<uint64_t>(d), rows,
              {1, 1, static_cast<uint8_t>(d / 8), 8});
     }
     __aicore__ inline void RotateRows(LocalTensor<float> dst, LocalTensor<float> src, int32_t d)
     {
+        // AIV: update the small Gram or accumulated R, never the input panel X.
         // Distinct source/destination matrices remove the trailing row copy,
         // and keep both original halves live until their last multiplication.
         const int32_t n = d * d / 2;
@@ -187,7 +157,7 @@ private:
     LocalTensor<uint32_t> transposeIdx_, nextTransposeIdx_, nextRowIdx_, aIdx_, bIdx_, cIdx_;
     LocalTensor<uint8_t> identityMask_, activeMask_, signMask_;
     int32_t m2v_, v2m2_, v2s_, s2v_, v2m3_, m3v_;
-    bool prepared_;
+    bool prepared_, preparedCrossOnly_;
 };
 
 // Only one Init branch allocates UB in this kernel invocation.
@@ -203,10 +173,10 @@ public:
     { return large_ ? largeSolver_.Scratch() : smallSolver_.Scratch(); }
     __aicore__ inline bool Run(GlobalTensor<float> gram, GlobalTensor<float> rotations,
                                GlobalTensor<float> flags, int32_t job, int32_t d,
-                               int32_t sweeps, float tol)
+                               int32_t sweeps, float tol, bool crossOnly, bool requireIdentity = true)
     {
-        if (large_) return largeSolver_.Run(gram, rotations, flags, job, sweeps, tol);
-        return smallSolver_.Run(gram, rotations, flags, job, d, sweeps, tol);
+        if (large_) return largeSolver_.Run(gram, rotations, flags, job, sweeps, tol, crossOnly, requireIdentity);
+        return smallSolver_.Run(gram, rotations, flags, job, d, sweeps, tol, crossOnly);
     }
 private:
     BlockRotationSmall smallSolver_;

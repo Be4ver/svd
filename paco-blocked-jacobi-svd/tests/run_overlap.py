@@ -71,7 +71,7 @@ def main():
             for mode in modes:
                 out = root / mode
                 cmd = common + ["--output-dir", str(out.resolve())]
-                if mode == "serial":
+                if mode in ("serial", "legacy"):
                     cmd.append("--no-overlap")
                 elif mode == "overlap" and split:
                     cmd.extend(["--pipeline-jobs", str(split)])
@@ -81,15 +81,19 @@ def main():
                 log_path(root, mode + ".log").write_text(run.stdout + run.stderr)
                 assert run.returncode == 0, f"{mode}: {run.stdout} {run.stderr}"
                 m = validate_execution(out)
-                want_overlap = mode == "overlap" and groups[1] > 0
+                # The default now uses point-to-point core-local queues.
+                # Explicit --pipeline-jobs still selects the legacy split.
+                core_local = mode == "overlap" and split == 0
+                want_overlap = mode == "overlap" and split > 0
                 assert m.get("phase_overlap") is want_overlap, f"{mode}: no requested overlap: {m}"
+                assert m.get("core_local_pipeline", False) is core_local, m
                 assert m["converged"] is (limit > 1), m
                 assert len(m["stream_ms"]) == 3, m
                 assert all(f"run={rep} sweeps={m['sweeps']} converged={int(limit > 1)}" in run.stdout for rep in range(3)), run.stdout
                 if fixed:
                     assert m["sweeps"] == limit, m
                 if mode == "overlap":
-                    assert m["pipeline_groups"] == list(groups), m
+                    assert m["pipeline_groups"] == ([sum(groups), 0] if core_local else list(groups)), m
                 elif mode == "serial":
                     assert m["pipeline_groups"] == [sum(groups), 0], m
                 metrics[mode] = m

@@ -1,5 +1,7 @@
 #pragma once
 #include "kernel_operator.h"
+#include "rotation_prepare.hpp"
+#include "rotation_angles.hpp"
 
 namespace blocked_jacobi {
 using namespace AscendC;
@@ -10,19 +12,21 @@ class BlockRotation128 {
 public:
     __aicore__ inline void Init(TPipe* pipe)
     {
+        // C220 reserves the top 8 KiB of its 192 KiB UB for API scratch.
+        // Keep user storage below the 184 KiB usable limit.
         pipe->InitBuffer(buf_, 180 * 1024);
         auto m = buf_.Get<float>();
         g_ = m; r_ = m[16384];
-        tmp_ = m[32768]; tmp2_ = m[34816];
-        cos_ = m[36864]; sin_ = m[38912];
-        broadcast_ = m[40960]; params_ = m[41984];
+        tmp_ = m[32768]; tmp2_ = m[36864];
+        // Two identical 8-float coefficient blocks per 128-element row.
+        cos_ = m[40960]; sin_ = m[41472]; params_ = m[41984];
         auto idx = m.ReinterpretCast<uint32_t>();
         columnIdx_ = idx[43200];
         aIdx_ = idx[45248]; bIdx_ = idx[45312]; cIdx_ = idx[45376];
         identityMask_ = m[45440].ReinterpretCast<uint8_t>();
         activeMask_ = params_[1088].ReinterpretCast<uint8_t>();
         signMask_ = params_[1120].ReinterpretCast<uint8_t>();
-        prepared_ = false;
+        prepared_ = false; preparedCrossOnly_ = false;
         m2v_ = pipe->FetchEventID(HardEvent::MTE2_V);
         v2m2_ = pipe->FetchEventID(HardEvent::V_MTE2);
         v2s_ = pipe->FetchEventID(HardEvent::V_S);
@@ -35,25 +39,30 @@ public:
 
     __aicore__ inline bool Run(GlobalTensor<float> gram, GlobalTensor<float> rotations,
                                GlobalTensor<float> flags, int32_t job,
-                               int32_t sweeps, float tol)
+                               int32_t sweeps, float tol, bool crossOnly, bool requireIdentity = true)
     {
-        if (!prepared_) Prepare();
+        if (!prepared_ || preparedCrossOnly_ != crossOnly) Prepare(crossOnly);
         SetFlag<HardEvent::V_MTE2>(v2m2_); WaitFlag<HardEvent::V_MTE2>(v2m2_);
         DataCopy(g_, gram[static_cast<int64_t>(job) * 16384], 16384);
         SetFlag<HardEvent::MTE2_V>(m2v_); WaitFlag<HardEvent::MTE2_V>(m2v_);
+        const bool skip = crossOnly && !CrossActive(tol);
+        // Core-local identity requests never read R or the per-job flag.
+        // The global phase path still requires a materialized identity R.
+        if (skip && !requireIdentity) return false;
         Duplicate(r_, 1.0f, 16384);
         Select(r_, identityMask_, r_, 0.0f, SELMODE::VSEL_TENSOR_SCALAR_MODE, 16384);
         bool initialActive = false;
-        for (int32_t sweep = 0; sweep < sweeps; ++sweep) {
+        for (int32_t sweep = 0; sweep < sweeps && !skip; ++sweep) {
             Duplicate(params_[960], 0.0f, 64);
-            for (int32_t round = 0; round < 127; ++round) {
-                Angles(tol);
-                RotateBothRows();
-                RotateColumns();
+            for (int32_t round = 0; round < (crossOnly ? 64 : 127); ++round) {
+                if (Angles(tol, crossOnly)) {
+                    RotateBothRows();
+                    RotateColumns();
+                }
                 // The same permutation conjugates G and permutes R's rows.
-                PermuteRows(g_);
+                PermuteRows(g_, crossOnly);
                 PermuteColumns();
-                PermuteRows(r_);
+                PermuteRows(r_, crossOnly);
             }
             WholeReduceMax(params_[1024], params_[960], 64, 1, 1, 1, 8,
                            ReduceOrder::ORDER_ONLY_VALUE);
@@ -63,16 +72,17 @@ public:
             if (!active) break;
         }
         // FP32 WholeReduceSum has a 64-element mask: sum both halves of
-        // each 128-element row explicitly, with sixteen rows per instruction.
-        for (int32_t row = 0; row < 128; row += 16) {
-            Mul(tmp_, r_[row * 128], r_[row * 128], 2048);
-            WholeReduceSum(params_, tmp_, 64, 16, 1, 1, 16);
-            WholeReduceSum(params_[128], tmp_[64], 64, 16, 1, 1, 16);
-            Add(params_, params_, params_[128], 16);
-            Muls(params_, params_, -0.5f, 16);
-            Adds(params_, params_, 1.5f, 16);
+        // each 128-element row explicitly, with 32 rows per instruction.
+        for (int32_t row = 0; row < 128; row += 32) {
+            Mul(tmp_, r_[row * 128], r_[row * 128], 4096);
+            WholeReduceSum(params_, tmp_, 64, 32, 1, 1, 16);
+            WholeReduceSum(params_[128], tmp_[64], 64, 32, 1, 1, 16);
+            Add(params_, params_, params_[128], 32);
+            Muls(params_, params_, -0.5f, 32);
+            Adds(params_, params_, 1.5f, 32);
             BroadcastRows(cos_, params_);
-            Mul(r_[row * 128], r_[row * 128], cos_, 2048);
+            Mul(r_[row * 128], r_[row * 128], cos_, uint64_t(64), 64,
+                {1, 1, 0, 8, 8, 1});
         }
         Duplicate(params_[1024], initialActive ? 1.0f : 0.0f, 8);
         SetFlag<HardEvent::V_MTE3>(v2m3_); WaitFlag<HardEvent::V_MTE3>(v2m3_);
@@ -83,85 +93,79 @@ public:
     }
 
 private:
-    __aicore__ inline int32_t Next(int32_t i)
+    __aicore__ inline bool CrossActive(float tol)
     {
-        if (i == 0) return 0;
-        if (i == 1) return 64;
-        if (i < 64) return i - 1;
-        if (i == 127) return 63;
-        return i + 1;
+        // With no active cross pair, all 64 rounds are identities. Check the
+        // SAME per-pair threshold on the unmodified Gram, using R as temporary
+        // storage before its identity initialization. No pair is omitted.
+        Gather(params_, g_, aIdx_, 0, 64);
+        Gather(params_[64], g_, bIdx_, 0, 64);
+        for (int32_t row = 0; row < 64; row += 32) {
+            BroadcastRows(cos_, params_[row]);
+            Mul(tmp_, params_[64], cos_, uint64_t(64), 32, {1, 1, 0, 8, 0, 2});
+            Abs(tmp_, tmp_, 2048); Sqrt(tmp_, tmp_, 2048);
+            Muls(tmp_, tmp_, tol, 2048); Adds(tmp_, tmp_, 1e-30f, 2048);
+            Abs(r_[row * 64], g_[row * 128 + 64], uint64_t(64), 32, {1, 1, 8, 16});
+            Sub(r_[row * 64], r_[row * 64], tmp_, 2048);
+        }
+        ReduceMax(params_[128], r_, tmp2_, 4096, false);
+        SetFlag<HardEvent::V_S>(v2s_); WaitFlag<HardEvent::V_S>(v2s_);
+        return params_.GetValue(128) > 0.0f;
     }
-    __aicore__ inline void Prepare()
+    __aicore__ inline void Prepare(bool crossOnly)
     {
-        // All immutable indices are beyond the shared preprocessing scratch.
-        for (int32_t row = 0; row < 16; ++row)
-            for (int32_t col = 0; col < 128; ++col)
-                columnIdx_.SetValue(row * 128 + col, (row * 128 + Next(col)) * 4);
-        for (int32_t i = 0; i < 64; ++i) {
-            aIdx_.SetValue(i, (i * 128 + i) * 4);
-            bIdx_.SetValue(i, ((i + 64) * 128 + i + 64) * 4);
-            cIdx_.SetValue(i, (i * 128 + i + 64) * 4);
-        }
-        for (int32_t i = 0; i < 2048; ++i) {
-            const int32_t diagonal = (i * 8 + 128) / 129;
-            const int32_t bit = diagonal * 129 - i * 8;
-            identityMask_.SetValue(i, bit < 8 ? static_cast<uint8_t>(1U << bit) : 0);
-        }
+        // Prepare only once per participating AIV, before its first Gram load.
         SetFlag<HardEvent::S_V>(s2v_); WaitFlag<HardEvent::S_V>(s2v_);
-        prepared_ = true;
+        auto sequence = tmp_, next = tmp_[128];
+        rotation_prepare::Templates(sequence, next, tmp2_, activeMask_, 128, crossOnly);
+        rotation_prepare::Pivots(aIdx_, bIdx_, cIdx_, sequence, tmp2_, 128);
+        Muls(g_, next, 4.0f, 128);
+        for (int32_t count = 128; count < 2048; count *= 2)
+            Adds(g_[count], g_, static_cast<float>(count * 4), count);
+        rotation_prepare::Indices(columnIdx_, g_, 2048);
+        rotation_prepare::Grids(r_, g_, sequence, tmp2_, 128);
+        Compare(identityMask_, g_, r_, CMPMODE::EQ, 16384);
+        prepared_ = true; preparedCrossOnly_ = crossOnly;
     }
-    __aicore__ inline void Angles(float tol)
+    __aicore__ inline bool Angles(float tol, bool checkActive)
     {
-        auto a = params_, b = params_[64], c = params_[128];
-        auto delta = params_[192], ad = params_[256], ac = params_[320];
-        auto scale = params_[384], u = params_[448], v = params_[512];
-        auto denom = params_[576], t = params_[640], cs = params_[704], sn = params_[768];
-        auto one = params_[832], active = params_[896], accum = params_[960];
-        Gather(a, g_, aIdx_, 0, 64);
-        Gather(b, g_, bIdx_, 0, 64);
-        Gather(c, g_, cIdx_, 0, 64);
-        Mul(u, a, b, 64); Abs(u, u, 64); Sqrt(u, u, 64);
-        Muls(u, u, tol, 64); Adds(u, u, 1e-30f, 64);
-        Abs(ac, c, 64);
-        Compare(activeMask_, ac, u, CMPMODE::GT, uint64_t(64), 1, {1, 1, 1, 8, 8, 8});
-        Duplicate(one, 1.0f, 64);
-        Select(active, activeMask_, one, 0.0f, SELMODE::VSEL_TENSOR_SCALAR_MODE, 64);
-        Max(accum, accum, active, 64);
-        Sub(delta, b, a, 64); Muls(delta, delta, 0.5f, 64); Abs(ad, delta, 64);
-        Max(scale, ad, ac, 64); Maxs(scale, scale, 1e-30f, 64);
-        Div(u, delta, scale, 64); Div(v, c, scale, 64);
-        Mul(u, u, u, 64); Mul(v, v, v, 64); Add(u, u, v, 64);
-        Sqrt(u, u, 64); Mul(u, u, scale, 64); Add(denom, ad, u, 64);
-        Maxs(denom, denom, 1e-30f, 64); Div(t, c, denom, 64);
-        Muls(v, t, -1.0f, 64);
-        CompareScalar(signMask_, delta, 0.0f, CMPMODE::GE, uint64_t(64), 1, {1, 1, 8, 8});
-        Select(t, signMask_, t, v, SELMODE::VSEL_TENSOR_TENSOR_MODE, 64);
-        Select(t, activeMask_, t, 0.0f, SELMODE::VSEL_TENSOR_SCALAR_MODE, 64);
-        Mul(u, t, t, 64); Adds(u, u, 1.0f, 64); Sqrt(u, u, 64);
-        Div(cs, one, u, 64); Mul(sn, cs, t, 64);
+        Gather(params_, g_, aIdx_, 0, 64);
+        Gather(params_[64], g_, bIdx_, 0, 64);
+        Gather(params_[128], g_, cIdx_, 0, 64);
+        RotationThreshold(params_, activeMask_, 64, tol);
+        if (checkActive) {
+            WholeReduceMax(params_[1024], params_[896], 64, 1, 1, 1, 8,
+                           ReduceOrder::ORDER_ONLY_VALUE);
+            SetFlag<HardEvent::V_S>(v2s_); WaitFlag<HardEvent::V_S>(v2s_);
+            if (params_.GetValue(1024) == 0.0f) return false;
+        }
+        RotationCoefficients(params_, activeMask_, signMask_, 64);
+        return true;
     }
     __aicore__ inline void BroadcastRows(LocalTensor<float> dst, LocalTensor<float> src)
     {
-        Brcb(tmp_, src, 2, {1, 8});
-        Brcb(broadcast_, tmp_, 16, {1, 8});
-        // FP32 vector mask is at most 64, so broadcast both row halves.
-        Adds(dst, broadcast_, 0.0f, uint64_t(64), 16, {1, 1, 16, 8});
-        Adds(dst[64], broadcast_, 0.0f, uint64_t(64), 16, {1, 1, 16, 8});
+        // Brcb expands 32 scalars into every other 32-byte block. Fill the
+        // gaps once; the row arithmetic reuses each block across 64 lanes
+        // with src1BlkStride=0. Only 512 floats instead of 4096 are needed.
+        Brcb(dst, src, 4, {2, 16});
+        // Read even blocks and write odd blocks: actual elements are disjoint.
+        Copy(dst[8], dst, uint64_t(8), 32, {1, 1, 2, 2});
     }
     __aicore__ inline void RotateTile(LocalTensor<float> matrix, int32_t row)
     {
+            // AIV: local G/R updates only; FusedCube::Apply performs R X.
             auto p = matrix[row * 128], q = matrix[(row + 64) * 128];
-            Mul(tmp_, p, cos_, 2048);
-            Mul(tmp2_, q, sin_, 2048);
-            Sub(tmp_, tmp_, tmp2_, 2048);
-            Mul(tmp2_, p, sin_, 2048);
-            Mul(q, q, cos_, 2048);
-            Add(q, q, tmp2_, 2048);
-            Adds(p, tmp_, 0.0f, 2048);
+            Mul(tmp_, p, cos_, uint64_t(64), 64, {1, 1, 0, 8, 8, 1});
+            Mul(tmp2_, q, sin_, uint64_t(64), 64, {1, 1, 0, 8, 8, 1});
+            Sub(tmp_, tmp_, tmp2_, 4096);
+            Mul(tmp2_, p, sin_, uint64_t(64), 64, {1, 1, 0, 8, 8, 1});
+            Mul(q, q, cos_, uint64_t(64), 64, {1, 1, 0, 8, 8, 1});
+            Add(q, q, tmp2_, 4096);
+            CopyRotationBuffer(p, tmp_, 4096);
     }
     __aicore__ inline void RotateBothRows()
     {
-        for (int32_t row = 0; row < 64; row += 16) {
+        for (int32_t row = 0; row < 64; row += 32) {
             BroadcastRows(cos_, params_[704 + row]);
             BroadcastRows(sin_, params_[768 + row]);
             RotateTile(g_, row);
@@ -171,52 +175,64 @@ private:
     __aicore__ inline void RotateColumns()
     {
         // Right multiplication by J^T, without transposing G. Each repeat
-        // handles 64 paired columns; 16 repeats cover sixteen physical rows.
-        for (int32_t row = 0; row < 128; row += 16) {
+        // handles 64 paired columns; 32 repeats cover 32 physical rows.
+        for (int32_t row = 0; row < 128; row += 32) {
             auto p = g_[row * 128], q = g_[row * 128 + 64];
-            Mul(tmp_, p, params_[704], uint64_t(64), 16, {1, 1, 1, 8, 16, 0});
-            Mul(tmp2_, q, params_[768], uint64_t(64), 16, {1, 1, 1, 8, 16, 0});
-            Sub(tmp_, tmp_, tmp2_, 1024);
-            Mul(tmp2_, p, params_[768], uint64_t(64), 16, {1, 1, 1, 8, 16, 0});
-            Mul(q, q, params_[704], uint64_t(64), 16, {1, 1, 1, 16, 16, 0});
-            Add(q, q, tmp2_, uint64_t(64), 16, {1, 1, 1, 16, 16, 8});
-            Adds(p, tmp_, 0.0f, uint64_t(64), 16, {1, 1, 16, 8});
+            Mul(tmp_, p, params_[704], uint64_t(64), 32, {1, 1, 1, 8, 16, 0});
+            Mul(tmp2_, q, params_[768], uint64_t(64), 32, {1, 1, 1, 8, 16, 0});
+            Sub(tmp_, tmp_, tmp2_, 2048);
+            Mul(tmp2_, p, params_[768], uint64_t(64), 32, {1, 1, 1, 8, 16, 0});
+            Mul(q, q, params_[704], uint64_t(64), 32, {1, 1, 1, 16, 16, 0});
+            Add(q, q, tmp2_, uint64_t(64), 32, {1, 1, 1, 16, 16, 8});
+            Copy(p, tmp_, uint64_t(64), 32, {1, 1, 16, 8});
         }
     }
-    __aicore__ inline void PermuteRows(LocalTensor<float> matrix)
+    __aicore__ inline void PermuteRows(LocalTensor<float> matrix, bool crossOnly)
     {
+        if (crossOnly) {
+            CopyRotationBuffer(cos_, matrix[64 * 128], 128);
+            for (int32_t start = 65; start < 128;) {
+                const int32_t count = 128 - start < 32 ? 128 - start : 32;
+                CopyRotationBuffer(tmp_, matrix[start * 128], count * 128);
+                CopyRotationBuffer(matrix[(start - 1) * 128], tmp_, count * 128);
+                start += count;
+            }
+            CopyRotationBuffer(matrix[127 * 128], cos_, 128);
+            return;
+        }
         // next=[0,64,1,...,62,65,...,127,63]. Two monotonic tiled
         // shifts implement it without a full matrix-sized Gather map.
-        Adds(cos_, matrix[64 * 128], 0.0f, 128);
-        Adds(sin_, matrix[63 * 128], 0.0f, 128);
+        CopyRotationBuffer(cos_, matrix[64 * 128], 128);
+        CopyRotationBuffer(sin_, matrix[63 * 128], 128);
         for (int32_t end = 63; end > 1;) {
-            const int32_t count = end - 1 < 16 ? end - 1 : 16;
+            const int32_t count = end - 1 < 32 ? end - 1 : 32;
             const int32_t start = end - count;
-            Adds(tmp_, matrix[start * 128], 0.0f, count * 128);
-            Adds(matrix[(start + 1) * 128], tmp_, 0.0f, count * 128);
+            CopyRotationBuffer(tmp_, matrix[start * 128], count * 128);
+            CopyRotationBuffer(matrix[(start + 1) * 128], tmp_, count * 128);
             end = start;
         }
         for (int32_t start = 65; start < 128;) {
-            const int32_t count = 128 - start < 16 ? 128 - start : 16;
-            Adds(tmp_, matrix[start * 128], 0.0f, count * 128);
-            Adds(matrix[(start - 1) * 128], tmp_, 0.0f, count * 128);
+            const int32_t count = 128 - start < 32 ? 128 - start : 32;
+            CopyRotationBuffer(tmp_, matrix[start * 128], count * 128);
+            CopyRotationBuffer(matrix[(start - 1) * 128], tmp_, count * 128);
             start += count;
         }
-        Adds(matrix[128], cos_, 0.0f, 128);
-        Adds(matrix[127 * 128], sin_, 0.0f, 128);
+        CopyRotationBuffer(matrix[128], cos_, 128);
+        CopyRotationBuffer(matrix[127 * 128], sin_, 128);
     }
     __aicore__ inline void PermuteColumns()
     {
+        // Retain a 16-row map to fit the 184 KiB user UB budget.
         for (int32_t row = 0; row < 128; row += 16) {
             Gather(tmp_, g_[row * 128], columnIdx_, 0, 2048);
-            Adds(g_[row * 128], tmp_, 0.0f, 2048);
+            CopyRotationBuffer(g_[row * 128], tmp_, 2048);
         }
     }
     TBuf<TPosition::VECCALC> buf_;
-    LocalTensor<float> g_, r_, tmp_, tmp2_, cos_, sin_, broadcast_, params_;
+    LocalTensor<float> g_, r_, tmp_, tmp2_, cos_, sin_, params_;
     LocalTensor<uint32_t> columnIdx_, aIdx_, bIdx_, cIdx_;
     LocalTensor<uint8_t> identityMask_, activeMask_, signMask_;
     int32_t m2v_, v2m2_, v2s_, s2v_, v2m3_, m3v_;
-    bool prepared_;
+    bool prepared_, preparedCrossOnly_;
 };
 }

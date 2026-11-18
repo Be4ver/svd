@@ -1,0 +1,122 @@
+[
+  {
+    "block": 16,
+    "nb": 2,
+    "rows": 32,
+    "batch": 1,
+    "relative_B_error": 7.266258356850947e-08,
+    "pass": true
+  },
+  {
+    "block": 16,
+    "nb": 4,
+    "rows": 64,
+    "batch": 2,
+    "relative_B_error": 1.7745880382467006e-07,
+    "pass": true
+  },
+  {
+    "block": 16,
+    "nb": 6,
+    "rows": 95,
+    "batch": 1,
+    "relative_B_error": 3.0489952979904337e-07,
+    "pass": true
+  },
+  {
+    "block": 16,
+    "nb": 8,
+    "rows": 127,
+    "batch": 5,
+    "relative_B_error": 1.6293944072040203e-07,
+    "pass": true
+  },
+  {
+    "block": 16,
+    "nb": 10,
+    "rows": 160,
+    "batch": 3,
+    "relative_B_error": 2.141699574741471e-07,
+    "pass": true
+  },
+  {
+    "block": 32,
+    "nb": 2,
+    "rows": 64,
+    "batch": 1,
+    "relative_B_error": 2.6125829853407965e-07,
+    "pass": true
+  },
+  {
+    "block": 32,
+    "nb": 4,
+    "rows": 128,
+    "batch": 2,
+    "relative_B_error": 6.797114696752223e-07,
+    "pass": true
+  },
+  {
+    "block": 32,
+    "nb": 6,
+    "rows": 191,
+    "batch": 1,
+    "relative_B_error": 1.7787203357245594e-06,
+    "pass": true
+  },
+  {
+    "block": 32,
+    "nb": 8,
+    "rows": 255,
+    "batch": 5,
+    "relative_B_error": 6.995762465608766e-07,
+    "pass": true
+  },
+  {
+    "block": 32,
+    "nb": 10,
+    "rows": 320,
+    "batch": 3,
+    "relative_B_error": 1.0062013731093511e-06,
+    "pass": true
+  },
+  {
+    "block": 64,
+    "nb": 2,
+    "rows": 128,
+    "batch": 1,
+    "relative_B_error": 1.7530010145980305e-06,
+    "pass": true
+  },
+  {
+    "block": 64,
+    "nb": 4,
+    "rows": 256,
+    "batch": 2,
+    "relative_B_error": 4.7043640700930674e-06,
+    "pass": true
+  },
+  {
+    "block": 64,
+    "nb": 6,
+    "rows": 383,
+    "batch": 1,
+    "relative_B_error": 1.0396188201977875e-05,
+    "pass": true
+  },
+  {
+    "block": 64,
+    "nb": 8,
+    "rows": 511,
+    "batch": 5,
+    "relative_B_error": 3.2495684953651677e-06,
+    "pass": true
+  },
+  {
+    "block": 64,
+    "nb": 10,
+    "rows": 640,
+    "batch": 3,
+    "relative_B_error": 5.3843436507817445e-06,
+    "pass": true
+  }
+]

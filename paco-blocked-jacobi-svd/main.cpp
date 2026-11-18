@@ -78,8 +78,9 @@ static Config Parse(int argc, char** argv) {
         else if (flag == "--output-dir") c.output = value;
         else throw std::runtime_error("unknown option " + flag);
     }
+    if (c.local != 1) throw std::runtime_error("--local-sweeps must be 1: each pair is visited once per global sweep");
     if (c.rows < 1 || c.rows > 4096 || c.cols < 1 || c.cols > 4096 || c.batch < 1 || c.batch > 1000000 ||
-        (c.block != 16 && c.block != 32 && c.block != 64) || c.sweeps < 1 || c.sweeps > 200 || c.local < 1 || c.local > 50 ||
+        (c.block != 16 && c.block != 32 && c.block != 64) || c.sweeps < 1 || c.sweeps > 200 ||
         c.repeat < 1 || c.repeat > 100 || c.cores < 0 || c.pipelineJobs < 0 ||
         (!c.overlap && c.pipelineJobs != 0) || !std::isfinite(c.tol) || c.tol < 1e-8f || c.tol > 1e-2f)
         throw std::runtime_error("unsupported shape or invalid tuning argument");
@@ -114,14 +115,10 @@ static int Run(const Config& c) {
     const int d = 2 * c.block, np = nb / 2, jobs = c.batch * np, rounds = nb - 1;
     if (c.pipelineJobs >= jobs && c.pipelineJobs != 0)
         throw std::runtime_error("pipeline-jobs must be smaller than block-pair tasks per round");
-    // Splitting <= AIV-count jobs doubles the number of parameter waves.
-    // Auto mode avoids that regression; explicit splits remain available.
-    // Balance parameter waves, placing complete AIV waves in group A. Unlike
-    // an element-wise half split, this never adds an extra parameter wave.
-    const int waves = (jobs + aiv - 1) / aiv;
-    const int autoSplit = (waves / 2) * aiv;
-    const int split = !c.overlap ? 0 : (c.pipelineJobs ? c.pipelineJobs : autoSplit);
-    const int groupA = split ? split : jobs, groupB = split ? jobs - split : 0;
+    // Auto mode uses two independently acknowledged AIV slots per AIC.
+    // Explicit phase splits and the global serial path remain CLI controls.
+    const int split = !c.overlap ? 0 : (c.pipelineJobs ? c.pipelineJobs : -1);
+    const int groupA = split > 0 ? split : jobs, groupB = split > 0 ? jobs - split : 0;
     const int phaseJobs = std::max(groupA, groupB);
     const int rank = std::min(c.rows, c.cols);
     const size_t elements = static_cast<size_t>(c.batch) * rp * cp;
@@ -135,7 +132,8 @@ static int Run(const Config& c) {
     DeviceBuffer input(original.size() * sizeof(float)), b(elements * sizeof(float)), panels(b.bytes),
         gram(static_cast<size_t>(jobs) * d * d * sizeof(float)), rotations(gram.bytes),
         flags(static_cast<size_t>(jobs) * 8 * sizeof(float)), scales(static_cast<size_t>(c.batch) * 8 * sizeof(float)),
-        status((aiv + 1) * 8 * sizeof(int32_t)), bout(input.bytes),
+        status((aiv + 1) * 8 * sizeof(int32_t)),
+        sync((static_cast<size_t>(2 * aiv) + static_cast<size_t>(c.batch) * nb + 1) * 64), bout(input.bytes),
         sout(static_cast<size_t>(c.batch) * rank * sizeof(float)),
         vtout(static_cast<size_t>(c.batch) * rank * c.cols * sizeof(float));
     input.Upload(original.data());
@@ -144,7 +142,8 @@ static int Run(const Config& c) {
     int finished = 0; bool converged = false;
     std::cout << "single-launch mixed kernel AIV=" << aiv << "/" << allAiv << " AIC=" << aic << "/" << allAic
               << " shape=" << c.rows << "x" << c.cols << " batch=" << c.batch << " block=" << c.block
-              << " overlap=" << (split > 0) << " groups=" << groupA << "+" << groupB << '\n';
+              << " overlap=" << (split != 0) << " groups=" << groupA << "+" << groupB
+              << " schedule=" << (split < 0 ? "core-local" : "global-phases") << '\n';
     aclrtEvent begin, end;
     ACL(aclrtCreateEvent(&begin)); ACL(aclrtCreateEvent(&end));
     for (int rep = 0; rep < c.repeat; ++rep) {
@@ -154,12 +153,24 @@ static int Run(const Config& c) {
         ACL(aclrtRecordEvent(begin, runtime.stream));
         ACL(aclrtlaunch_blocked_jacobi_fused(aic, runtime.stream,
             input.ptr, b.ptr, panels.ptr, gram.ptr, rotations.ptr, flags.ptr, scales.ptr, status.ptr,
-            bout.ptr, sout.ptr, vtout.ptr, c.rows, c.cols, c.batch, c.block, c.sweeps, c.local, c.tol, c.fixed ? 1 : 0, split));
+            bout.ptr, sout.ptr, vtout.ptr, sync.ptr, c.rows, c.cols, c.batch, c.block, c.sweeps, c.local, c.tol, c.fixed ? 1 : 0, split));
         ACL(aclrtRecordEvent(end, runtime.stream));
         ACL(aclrtSynchronizeStream(runtime.stream));
         const double hostMs = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
         float deviceMs = 0; ACL(aclrtEventElapsedTime(&deviceMs, begin, end));
         status.Download(state.data());
+        if (split < 0) {
+            std::vector<int64_t> signals(sync.bytes / sizeof(int64_t));
+            sync.Download(signals.data());
+            if (signals[(2 * aiv + c.batch * nb) * 8] != 0) {
+                for (int w = 0; w < aiv; ++w)
+                    std::cerr << "slot=" << w << " request=" << signals[w * 8]
+                              << " ack=" << signals[(aiv + w) * 8] << '\n';
+                for (int b = 0; b < c.batch * nb; ++b)
+                    std::cerr << "block=" << b << " version=" << signals[(2 * aiv + b) * 8] << '\n';
+                throw std::runtime_error("core-local dependency watchdog expired");
+            }
+        }
         const auto* result = state.data() + aiv * 8;
         if (result[2] != 0x424a5356 || result[0] < 1 || result[0] > c.sweeps || (result[1] != 0 && result[1] != 1))
             throw std::runtime_error("invalid/unwritten device completion status; check kernel registration");
@@ -180,19 +191,25 @@ static int Run(const Config& c) {
     std::ofstream metrics(c.output + "/metrics.json");
     metrics << std::setprecision(9) << "{\n  \"rows\": " << c.rows << ", \"cols\": " << c.cols << ", \"batch\": " << c.batch
             << ", \"aiv\": " << aiv << ", \"aic\": " << aic << ", \"block\": " << c.block
-            << ", \"local_sweeps\": " << c.local << ", \"sweeps\": " << finished << ", \"converged\": " << (converged ? "true" : "false")
+            << ", \"local_sweeps\": " << c.local << ", \"sweep_schedule\": \"each_pair_once\", \"sweeps\": " << finished << ", \"converged\": " << (converged ? "true" : "false")
             << ",\n  \"kernel_launches_per_run\": 1, \"device_preprocess\": true, \"device_postprocess\": true, \"device_convergence\": true"
             << ",\n  \"rows_pad\": " << rp << ", \"cols_pad\": " << cp << ", \"rounds_per_sweep\": " << rounds
-            << ",\n  \"phase_overlap\": " << (split ? "true" : "false")
+            << ",\n  \"phase_overlap\": " << (split > 0 ? "true" : "false")
+            << ", \"core_local_pipeline\": " << (split < 0 ? "true" : "false")
+            << ", \"identity_apply_elision\": " << (split < 0 ? "true" : "false")
+            << ", \"synchronization\": \"" << (split < 0 ? "block_versions_two_slots" : "global_phases") << "\""
+            << ", \"global_barriers_per_sweep\": " << (split < 0 ? 2 : (split > 0 ? 5 : 4) * rounds + 2)
             << ", \"pipeline_groups\": [" << groupA << ", " << groupB << "]"
             << ", \"fixed_sweeps\": " << (c.fixed ? "true" : "false")
-            << ",\n  \"tasks_per_round\": {\"pack\": " << c.batch * rp << ", \"gram\": " << jobs
+            << ",\n  \"pack_rows_per_task\": 4"
+            << ",\n  \"tasks_per_round\": {\"pack\": " << c.batch * rp / 4 << ", \"gram\": " << jobs
             << ", \"parameters\": " << jobs << ", \"apply\": " << jobs * 2 * ((cp + 127) / 128) << "}"
-            << ",\n  \"useful_core_upper_bound\": {\"pack_aiv\": " << std::min(aiv, c.batch * rp)
+            << ",\n  \"useful_core_upper_bound\": {\"pack_aiv\": " << (split < 0 ? std::min(aiv, jobs) : std::min(aiv, c.batch * rp / 4))
             << ", \"parameters_aiv\": " << std::min(aiv, phaseJobs)
             << ", \"gram_aic\": " << std::min(aic, phaseJobs)
-            << ", \"apply_aic\": " << std::min(aic, phaseJobs * 2 * ((cp + 127) / 128)) << "}"
+            << ", \"apply_aic\": " << (split < 0 ? std::min(aic, jobs) : std::min(aic, phaseJobs * 2 * ((cp + 127) / 128))) << "}"
             << ",\n  \"padded_cube_flops\": " << 4LL * jobs * d * d * cp * rounds * finished
+            << ", \"work_estimates_are_upper_bounds\": " << (split < 0 ? "true" : "false")
             << ",\n  \"stream_ms\": [";
     for (size_t i = 0; i < deviceTimes.size(); ++i) metrics << (i ? ", " : "") << deviceTimes[i];
     metrics << "],\n  \"operator_wall_ms\": [";

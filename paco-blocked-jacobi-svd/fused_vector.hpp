@@ -47,6 +47,13 @@ public:
         m3v_ = pipe->FetchEventID(HardEvent::MTE3_V);
         m3m2_ = pipe->FetchEventID(HardEvent::MTE3_MTE2);
         v2m2_ = pipe->FetchEventID(HardEvent::V_MTE2);
+        s2m2_ = pipe->FetchEventID(HardEvent::S_MTE2);
+        for (int slot = 0; slot < 2; ++slot) {
+            packReady_[slot] = pipe->FetchEventID(HardEvent::MTE2_MTE3);
+            packFree_[slot] = pipe->FetchEventID(HardEvent::MTE3_MTE2);
+            copyReady_[slot] = pipe->FetchEventID(HardEvent::MTE2_V);
+            copyOutput_[slot] = pipe->FetchEventID(HardEvent::V_MTE3);
+        }
     }
 
     __aicore__ inline void Initialize()
@@ -68,7 +75,10 @@ public:
             const float pre = scale < 1e-20f ? 18446744073709551616.0f :
                               (scale > 1e20f ? 5.421010862427522e-20f : 1.0f);
             const float inverse = 1.0f / (scale * pre);
-            for (int i = 0; i < rp_; ++i) {
+            if (cols_ == cp_ && rows_ == rp_) {
+                ScaleRowsAligned(a_, b_, static_cast<int64_t>(m) * rows_ * cp_,
+                    static_cast<int64_t>(m) * rp_ * cp_, rows_, pre, inverse, true);
+            } else for (int i = 0; i < rp_; ++i) {
                 if (i < rows_) LoadRaw(m, i);
                 else { S2V(); Duplicate(row_, 0.0f, cp_); }
                 Muls(row_, row_, pre, cp_);
@@ -80,20 +90,74 @@ public:
 
     __aicore__ inline void Pack(int round)
     {
-        for (int task = cid_; task < batch_ * rp_; task += cores_) {
-            const int job = task / d_, i = task % d_, m = job / np_, pair = job % np_;
+        // Reuse the eigensolver's first 128 KiB as two four-row DMA buffers.
+        // All supported blocks are multiples of four, so a tile never crosses
+        // a block boundary. No vector arithmetic is needed for this GM copy.
+        SetFlag<HardEvent::V_MTE2>(v2m2_); WaitFlag<HardEvent::V_MTE2>(v2m2_);
+        for (int slot = 0; slot < 2; ++slot)
+            SetFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        int slot = 0;
+        for (int task = cid_; task < batch_ * rp_ / 4; task += cores_, slot ^= 1) {
+            const int row = task * 4;
+            const int job = row / d_, i = row % d_, m = job / np_, pair = job % np_;
             const int rb = PairBlock(pair, i / block_, round, nb_);
-            Load(b_, (static_cast<int64_t>(m) * rp_ + rb * block_ + i % block_) * cp_);
-            Store(x_, static_cast<int64_t>(task) * cp_, cp_);
+            auto buffer = row_[slot * 4 * cp_];
+            WaitFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+            DataCopy(buffer,
+                b_[(static_cast<int64_t>(m) * rp_ + rb * block_ + i % block_) * cp_],
+                4 * cp_);
+            SetFlag<HardEvent::MTE2_MTE3>(packReady_[slot]);
+            WaitFlag<HardEvent::MTE2_MTE3>(packReady_[slot]);
+            DataCopy(x_[static_cast<int64_t>(row) * cp_], buffer, 4 * cp_);
+            SetFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
         }
+        // Balance both flags even on idle cores; drain before reusing G/R.
+        for (int buffer = 0; buffer < 2; ++buffer)
+            WaitFlag<HardEvent::MTE3_MTE2>(packFree_[buffer]);
     }
 
-    __aicore__ inline bool Parameters(int begin, int end, int localSweeps, float tol)
+    __aicore__ inline bool Parameters(int begin, int end, int localSweeps, float tol, bool crossOnly)
     {
         M3M2();
         bool active = false;
         for (int job = begin + cid_; job < end; job += cores_)
-            if (rotation_.Run(g_, r_, f_, job, d_, localSweeps, tol)) active = true;
+            if (rotation_.Run(g_, r_, f_, job, d_, localSweeps, tol, crossOnly)) active = true;
+        return active;
+    }
+
+    __aicore__ inline void AcquireInputs()
+    { SetFlag<HardEvent::S_MTE2>(s2m2_); WaitFlag<HardEvent::S_MTE2>(s2m2_); }
+
+    __aicore__ inline void ReleaseOutputs() { M3S(); }
+
+    __aicore__ inline void PackJob(int job, int round)
+    {
+        AcquireInputs();
+        SetFlag<HardEvent::V_MTE2>(v2m2_); WaitFlag<HardEvent::V_MTE2>(v2m2_);
+        for (int slot = 0; slot < 2; ++slot)
+            SetFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        const int m = job / np_, pair = job % np_;
+        int slot = 0;
+        for (int i = 0; i < d_; i += 4, slot ^= 1) {
+            const int rb = PairBlock(pair, i / block_, round, nb_);
+            auto buffer = row_[slot * 4 * cp_];
+            WaitFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+            DataCopy(buffer, b_[(static_cast<int64_t>(m) * rp_ + rb * block_ + i % block_) * cp_], 4 * cp_);
+            SetFlag<HardEvent::MTE2_MTE3>(packReady_[slot]);
+            WaitFlag<HardEvent::MTE2_MTE3>(packReady_[slot]);
+            DataCopy(x_[(static_cast<int64_t>(job) * d_ + i) * cp_], buffer, 4 * cp_);
+            SetFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        }
+        for (int slot = 0; slot < 2; ++slot)
+            WaitFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        ReleaseOutputs();
+    }
+
+    __aicore__ inline bool ParametersJob(int job, int localSweeps, float tol, bool crossOnly)
+    {
+        AcquireInputs();
+        const bool active = rotation_.Run(g_, r_, f_, job, d_, localSweeps, tol, crossOnly, false);
+        ReleaseOutputs();
         return active;
     }
 
@@ -159,7 +223,10 @@ public:
             S2M3();
             DataCopyExtParams out{1, static_cast<uint32_t>(rank * sizeof(float)), 0, 0, 0};
             DataCopyPad(sigma_[static_cast<int64_t>(m) * rank], sorted_, out); M3S();
-            for (int i = 0; i < rows_; ++i) {
+            if (cols_ == cp_) {
+                ScaleRowsAligned(b_, bout_, static_cast<int64_t>(m) * rp_ * cp_,
+                    static_cast<int64_t>(m) * rows_ * cp_, rows_, 1.0f, scale, false);
+            } else for (int i = 0; i < rows_; ++i) {
                 Load(b_, (static_cast<int64_t>(m) * rp_ + i) * cp_);
                 Muls(row_, row_, scale, cp_);
                 Store(bout_, (static_cast<int64_t>(m) * rows_ + i) * cols_, cols_);
@@ -173,6 +240,33 @@ public:
     }
 
 private:
+    __aicore__ inline void ScaleRowsAligned(GlobalTensor<float> src, GlobalTensor<float> dst,
+        int64_t srcOffset, int64_t dstOffset, int count, float pre, float scale, bool twoStage)
+    {
+        // Two rows of the existing scratch, with no additional UB allocation.
+        // Free(slot): MTE3 has finished reading it before MTE2 overwrites it.
+        // Ready(slot): MTE2 -> Vector; Output(slot): Vector -> MTE3.
+        SetFlag<HardEvent::V_MTE2>(v2m2_); WaitFlag<HardEvent::V_MTE2>(v2m2_);
+        for (int slot = 0; slot < 2; ++slot)
+            SetFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        for (int i = 0; i < count; ++i) {
+            const int slot = i & 1;
+            auto buffer = row_[slot * cp_];
+            WaitFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+            DataCopy(buffer, src[srcOffset + static_cast<int64_t>(i) * cp_], cp_);
+            SetFlag<HardEvent::MTE2_V>(copyReady_[slot]);
+            WaitFlag<HardEvent::MTE2_V>(copyReady_[slot]);
+            if (twoStage) Muls(buffer, buffer, pre, cp_);
+            Muls(buffer, buffer, scale, cp_);
+            SetFlag<HardEvent::V_MTE3>(copyOutput_[slot]);
+            WaitFlag<HardEvent::V_MTE3>(copyOutput_[slot]);
+            DataCopy(dst[dstOffset + static_cast<int64_t>(i) * cp_], buffer, cp_);
+            SetFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        }
+        for (int slot = 0; slot < 2; ++slot)
+            WaitFlag<HardEvent::MTE3_MTE2>(packFree_[slot]);
+        M3V(); M3S();
+    }
     __aicore__ inline void SiftDown(int root, int count)
     {
         const int saved = perm_.GetValue(root);
@@ -220,7 +314,9 @@ private:
     LocalTensor<int32_t> perm_, ctrl_;
     BlockRotation rotation_;
     int rows_, cols_, batch_, block_, nb_, rp_, cp_, d_, np_, cid_, cores_;
-    int m2s_, m2v_, v2s_, s2v_, v2m3_, s2m3_, m3s_, m3v_, m3m2_, v2m2_;
+    int m2s_, m2v_, v2s_, s2v_, v2m3_, s2m3_, m3s_, m3v_, m3m2_, v2m2_, s2m2_;
+    int packReady_[2], packFree_[2];
+    int copyReady_[2], copyOutput_[2];
 };
 #endif
 }

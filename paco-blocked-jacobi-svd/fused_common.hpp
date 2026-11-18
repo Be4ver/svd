@@ -1,15 +1,10 @@
 #pragma once
 #include "kernel_operator.h"
+#include "core_local_schedule.hpp"
 
 namespace blocked_jacobi {
 using namespace AscendC;
 constexpr int32_t kDone = 0x424a5356;
-
-__aicore__ inline int32_t PairBlock(int32_t pair, int32_t half, int32_t round, int32_t nb)
-{
-    const int32_t pos = half == 0 ? pair : nb - 1 - pair;
-    return pos == 0 ? 0 : 1 + (pos - 1 + nb - 1 - round) % (nb - 1);
-}
 
 // Every resident AIV and AIC participates, including cores with no work.
 // Mode 0 orders all producers of one core type. Mode 2 joins both types.

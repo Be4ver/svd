@@ -19,10 +19,10 @@ def main():
     cases = [
         ("two_aiv_repeat", rng.normal(size=(3, 37, 19)).astype(np.float32), 2, 30, 16, 1, 3, False),
         ("four_aiv_block32", rng.normal(size=(5, 128, 256)).astype(np.float32), 4, 30, 32, 1, 2, False),
-        ("two_aiv_block64", rng.normal(size=(5, 128, 160)).astype(np.float32), 2, 30, 64, 2, 3, False),
+        ("two_aiv_block64", rng.normal(size=(5, 128, 160)).astype(np.float32), 2, 30, 64, 1, 3, False),
         ("fixed_zero_block64", np.zeros((5, 129, 97), np.float32), 4, 3, 64, 1, 2, True),
         ("fixed_zero", np.zeros((5, 65, 33), np.float32), 0, 3, 16, 1, 2, True),
-        ("fixed_random", rng.normal(size=(10, 32, 32)).astype(np.float32), 0, 20, 16, 2, 2, True),
+        ("fixed_random", rng.normal(size=(10, 32, 32)).astype(np.float32), 0, 20, 16, 1, 2, True),
     ]
     results = []
     for name, a, cores, sweeps, block, local, repeat, fixed in cases:
@@ -56,6 +56,12 @@ def main():
         results.append(result)
         print(json.dumps(result), flush=True)
         (args.artifacts / "results.json").write_text(json.dumps(results, indent=2))
+    invalid = subprocess.run([str(args.exe.resolve()), "0", "32", "32", "1",
+                              "--local-sweeps", "2"], capture_output=True, text=True)
+    rejected = invalid.returncode != 0 and "--local-sweeps must be 1" in invalid.stderr
+    results.append({"case": "reject_repeated_local_sweeps", "pass": rejected})
+    (args.artifacts / "results.json").write_text(json.dumps(results, indent=2))
+    print(json.dumps(results[-1]), flush=True)
     return int(any(not r["pass"] for r in results))
 
 
